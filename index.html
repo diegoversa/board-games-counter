@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Game Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Playfair+Display:wght@400;700&family=Bebas+Neue&family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ===================== BASE ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Barlow', sans-serif;
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  color: #fff;
+}
+
+/* ===================== SCREENS ===================== */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ===================== HOME SCREEN ===================== */
+#homeScreen {
+  background: #0d0d0d;
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgba(180,120,60,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(60,100,60,0.12) 0%, transparent 50%);
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 2rem 1.5rem;
+}
+
+.home-logo {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.home-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 3rem;
+  letter-spacing: 6px;
+  background: linear-gradient(135deg, #e8c97a, #c8860a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.3rem;
+}
+
+.home-sub {
+  color: #666;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.game-select-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 340px;
+}
+
+.game-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: rgba(255,255,255,0);
+  transition: background 0.15s;
+}
+
+.game-card:active::after { background: rgba(255,255,255,0.05); }
+.game-card:active { transform: scale(0.97); }
+
+.game-card-icon { font-size: 2.4rem; flex-shrink: 0; }
+
+.game-card-text { flex: 1; }
+.game-card-text h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
+.game-card-text p { font-size: 0.78rem; color: #666; margin-top: 0.2rem; line-height: 1.4; }
+
+.game-card-arrow { color: #444; font-size: 1.1rem; }
+
+.game-card.mus {
+  border-color: #3d2b1a;
+  background: linear-gradient(135deg, #1a0f00 0%, #1a1a1a 100%);
+}
+.game-card.mus .game-card-text h3 { color: #e8c97a; }
+.game-card.mus .game-card-icon { filter: drop-shadow(0 0 8px rgba(232,201,122,0.4)); }
+
+.game-card.generic {
+  border-color: #1a2a3a;
+  background: linear-gradient(135deg, #001020 0%, #1a1a1a 100%);
+}
+.game-card.generic .game-card-text h3 { color: #7ab8e8; }
+
+/* ===================== SETUP SCREENS ===================== */
+.setup-screen {
+  padding: 0;
+  flex-direction: column;
+}
+
+.setup-header {
+  padding: 3.5rem 1.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-btn {
+  width: 40px; height: 40px;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.back-btn:active { background: #252525; }
+
+.setup-header h2 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.8rem;
+  letter-spacing: 3px;
+}
+
+.setup-body {
+  flex: 1;
+  padding: 0 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  overflow-y: auto;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.field-input {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 0.9rem 1.1rem;
+  color: #fff;
+  font-family: 'Barlow', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field-input:focus { border-color: #555; }
+.field-input::placeholder { color: #3a3a3a; }
+
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 0.8rem 1rem;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.player-color-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.player-row-name { flex: 1; font-weight: 700; font-size: 1rem; }
+
+.player-row-remove {
+  width: 28px; height: 28px;
+  border: none;
+  background: #2a1a1a;
+  border-radius: 8px;
+  color: #c44;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.player-row-remove:active { background: #3a2222; }
+
+.add-player-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.add-player-row .field-input { flex: 1; }
+
+.btn-icon {
+  width: 48px; height: 48px;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.btn-icon:active { transform: scale(0.93); }
+
+/* ===================== MUS THEME ===================== */
+#musSetupScreen { background: #0d0800; }
+#musSetupScreen .setup-header { background: linear-gradient(180deg, rgba(232,201,122,0.08) 0%, transparent 100%); }
+#musSetupScreen .setup-header h2 { color: #e8c97a; }
+#musSetupScreen .back-btn { border-color: #3d2b1a; }
+#musSetupScreen .field-input { background: #140d00; border-color: #3d2b1a; }
+#musSetupScreen .field-input:focus { border-color: #e8c97a; }
+#musSetupScreen .player-row { background: #140d00; border-color: #3d2b1a; }
+#musSetupScreen .btn-icon { background: #c8860a; color: #000; }
+
+/* MUS GAME SCREEN */
+#musScreen {
+  background: #0a0600;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8860a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* GENERIC THEME */
+#genericSetupScreen { background: #000d1a; }
+#genericSetupScreen .setup-header h2 { color: #7ab8e8; }
+#genericSetupScreen .back-btn { border-color: #1a2a3a; }
+#genericSetupScreen .field-input { background: #000d1a; border-color: #1a2a3a; }
+#genericSetupScreen .field-input:focus { border-color: #7ab8e8; }
+#genericSetupScreen .player-row { background: #000d1a; border-color: #1a2a3a; }
+#genericSetupScreen .btn-icon { background: #1a6ea8; color: #fff; }
+
+#genericScreen {
+  background: #000d1a;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(122,184,232,0.06) 0%, transparent 60%);
+}
+
+/* ===================== START BTN ===================== */
+.start-btn {
+  width: 100%;
+  padding: 1.1rem;
+  border: none;
+  border-radius: 18px;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: auto;
+}
+.start-btn:active { transform: scale(0.97); }
+.start-btn.mus { background: linear-gradient(135deg, #e8c97a, #c8860a); color: #000; }
+.start-btn.generic { background: linear-gradient(135deg, #7ab8e8, #1a6ea8); color: #000; }
+
+/* ===================== MUS GAME ===================== */
+.game-topbar {
+  padding: 3rem 1.2rem 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.game-title-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-title-bar .gtitle {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+}
+
+.game-title-bar .gsub {
+  font-size: 0.72rem;
+  color: #555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* MUS Scoreboard */
+.mus-board {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem 1rem;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.mus-team-card {
+  background: #140d00;
+  border: 1px solid #3d2b1a;
+  border-radius: 22px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.mus-team-header {
+  background: linear-gradient(135deg, #2a1800, #1a0d00);
+  padding: 1rem 1.2rem 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #3d2b1a;
+}
+
+.mus-team-name {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  color: #e8c97a;
+}
+
+.mus-team-players {
+  font-size: 0.75rem;
+  color: #7a6040;
+}
+
+.mus-games-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.2rem 0.5rem;
+}
+
+.mus-game-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #5a4020;
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.mus-juegos-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.juego-stones {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 28px;
+  align-items: center;
+}
+
+.stone {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f0d080, #c8860a);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.3);
+  transition: transform 0.15s;
+}
+
+.stone.spent {
+  background: radial-gradient(circle at 35% 35%, #3a3a3a, #1a1a1a);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* amarragos = sets of 5 */
+.amarrago-mark {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 4px rgba(232,201,122,0.6));
+}
+
+.mus-points-section {
+  padding: 0.5rem 1.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mus-punto-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mus-punto-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #5a4020;
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.mus-stone-btn {
+  flex: 1;
+  height: 40px;
+  border: 1px solid #3d2b1a;
+  border-radius: 10px;
+  background: #1a0d00;
+  color: #e8c97a;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.mus-stone-btn:active { transform: scale(0.94); background: #2a1500; }
+
+.mus-stone-display {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 80px;
+  justify-content: center;
+}
+
+.mini-stone {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+}
+
+.mini-stone.gold {
+  background: radial-gradient(circle at 35% 35%, #f0d080, #c8860a);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.mini-stone.dark {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+}
+
+/* 5 stones = 1 amárrago */
+.amarrago-badge {
+  background: linear-gradient(135deg, #c8860a, #7a4a00);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+.mus-totals-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.2rem;
+  border-top: 1px solid #3d2b1a;
+  background: #0d0800;
+}
+
+.mus-total-label { font-size: 0.72rem; color: #5a4020; letter-spacing: 1px; text-transform: uppercase; }
+
+.mus-total-num {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2rem;
+  color: #e8c97a;
+  line-height: 1;
+}
+
+.mus-total-num span { font-size: 0.9rem; color: #5a4020; margin-left: 2px; }
+
+.mus-progress-bar {
+  height: 4px;
+  background: #2a1800;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.mus-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c8860a, #e8c97a);
+  border-radius: 0;
+  transition: width 0.4s ease;
+}
+
+/* MUS ACTIONS */
+.mus-actions {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #1a1000;
+  background: #0d0800;
+  flex-shrink: 0;
+}
+
+.mus-action-btn {
+  flex: 1;
+  padding: 0.8rem 0;
+  border: 1px solid #3d2b1a;
+  border-radius: 14px;
+  background: #1a0d00;
+  color: #e8c97a;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.mus-action-btn .icon { font-size: 1.2rem; }
+.mus-action-btn:active { background: #2a1500; transform: scale(0.96); }
+.mus-action-btn.primary { background: linear-gradient(135deg, #2a1800, #1a0d00); border-color: #c8860a; }
+
+/* ===================== GENERIC GAME ===================== */
+.generic-topbar {
+  padding: 3rem 1.2rem 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border-bottom: 1px solid #0d1f2d;
+  background: rgba(0,13,26,0.8);
+}
+
+.generic-board {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.generic-players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.generic-player-row {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #0d1f2d;
+  gap: 1rem;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.generic-rank-badge {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.generic-rank-badge.r1 { background: rgba(245,166,35,0.15); color: #f5a623; border: 1px solid rgba(245,166,35,0.3); }
+.generic-rank-badge.r2 { background: rgba(192,192,192,0.1); color: #c0c0c0; border: 1px solid rgba(192,192,192,0.2); }
+.generic-rank-badge.r3 { background: rgba(205,127,50,0.1); color: #cd7f32; border: 1px solid rgba(205,127,50,0.2); }
+.generic-rank-badge.rn { background: rgba(255,255,255,0.05); color: #444; border: 1px solid rgba(255,255,255,0.07); }
+
+.generic-player-info { flex: 1; min-width: 0; }
+
+.generic-player-name {
+  font-weight: 800;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.generic-player-name .pdot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.generic-player-history {
+  font-size: 0.72rem;
+  color: #3a5060;
+  margin-top: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.generic-player-history .ph { margin-right: 0.25rem; }
+.generic-player-history .ph.p { color: #2a6a4a; }
+.generic-player-history .ph.n { color: #6a2a3a; }
+
+.generic-score-area {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.score-display {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2rem;
+  line-height: 1;
+  min-width: 56px;
+  text-align: right;
+  color: #fff;
+}
+
+.score-display.leading { color: #7ab8e8; }
+
+.delta-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.delta-btn {
+  width: 32px; height: 32px;
+  border: none;
+  border-radius: 9px;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+  line-height: 1;
+}
+.delta-btn:active { transform: scale(0.88); }
+.delta-btn.plus { background: rgba(76,175,130,0.2); color: #4caf82; border: 1px solid rgba(76,175,130,0.3); }
+.delta-btn.minus { background: rgba(233,69,96,0.15); color: #e94560; border: 1px solid rgba(233,69,96,0.25); }
+
+/* custom score input */
+.custom-score-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid #0d1f2d;
+  background: #000d1a;
+}
+
+.custom-score-row select,
+.custom-score-row input {
+  background: #001525;
+  border: 1px solid #1a2a3a;
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 0.8rem;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.custom-score-row select { flex: 2; }
+.custom-score-row input { flex: 1; text-align: center; }
+
+.custom-score-row .apply-btn {
+  flex-shrink: 0;
+  background: #1a6ea8;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.5px;
+}
+.custom-score-row .apply-btn:active { background: #2a7ec0; }
+
+.generic-bottom {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #0d1f2d;
+  background: #000d1a;
+  flex-shrink: 0;
+}
+
+.generic-bottom-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 14px;
+  border: 1px solid #1a2a3a;
+  background: #001525;
+  color: #7ab8e8;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  transition: all 0.15s;
+}
+.generic-bottom-btn .icon { font-size: 1.1rem; }
+.generic-bottom-btn:active { background: #001e35; transform: scale(0.96); }
+.generic-bottom-btn.danger { color: #e94560; border-color: #3a1a2a; }
+
+/* ===================== WINNER OVERLAY ===================== */
+.winner-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.winner-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.winner-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 28px;
+  padding: 2.5rem 2rem;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.6) translateY(30px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.winner-trophy { font-size: 5rem; margin-bottom: 1rem; }
+.winner-title { font-family: 'Bebas Neue', cursive; font-size: 2.8rem; letter-spacing: 3px; margin-bottom: 0.3rem; }
+.winner-sub { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+
+.winner-btns { display: flex; flex-direction: column; gap: 0.6rem; }
+.winner-btn {
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 14px;
+  border: none;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.winner-btn:active { transform: scale(0.97); }
+.winner-btn.primary { background: linear-gradient(135deg, #e8c97a, #c8860a); color: #000; }
+.winner-btn.secondary { background: #1a1a1a; color: #666; border: 1px solid #2a2a2a; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 6rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 0.65rem 1.2rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  z-index: 500;
+  opacity: 0;
+  transition: all 0.25s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* MUS SCORING MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  z-index: 800;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.modal-overlay.show { opacity: 1; pointer-events: all; }
+
+.modal-sheet {
+  background: #140d00;
+  border: 1px solid #3d2b1a;
+  border-bottom: none;
+  border-radius: 24px 24px 0 0;
+  padding: 1.5rem 1.5rem 3rem;
+  width: 100%;
+  max-width: 440px;
+  animation: slideUp 0.3s ease both;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-sheet.generic-sheet {
+  background: #000d1a;
+  border-color: #1a2a3a;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: #3a2a1a;
+  border-radius: 2px;
+  margin: 0 auto 1.2rem;
+}
+
+.modal-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  color: #e8c97a;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+.modal-title.generic { color: #7ab8e8; }
+
+.punto-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.punto-item {
+  background: #1a0d00;
+  border: 1px solid #3d2b1a;
+  border-radius: 14px;
+  padding: 0.9rem 0.8rem;
+}
+
+.punto-item-label {
+  font-size: 0.7rem;
+  color: #5a4020;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.punto-item-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem;
+}
+
+.punto-tiny-btn {
+  width: 30px; height: 30px;
+  border: 1px solid #3d2b1a;
+  border-radius: 8px;
+  background: #0d0600;
+  color: #e8c97a;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.punto-tiny-btn:active { transform: scale(0.88); background: #1a0d00; }
+
+.punto-val {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.6rem;
+  color: #e8c97a;
+  min-width: 24px;
+  text-align: center;
+}
+
+.modal-confirm-btn {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.modal-confirm-btn:active { transform: scale(0.97); }
+.modal-confirm-btn.mus { background: linear-gradient(135deg, #e8c97a, #c8860a); color: #000; }
+.modal-confirm-btn.generic { background: linear-gradient(135deg, #7ab8e8, #1a6ea8); color: #000; }
+
+/* Mus win condition display */
+.mus-win-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.2rem;
+  background: #0d0800;
+  font-size: 0.75rem;
+  color: #5a4020;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #2a1800;
+}
+
+.mus-win-info { font-weight: 700; color: #7a5030; }
+
+/* highlight leading team */
+.mus-team-card.leading {
+  border-color: rgba(232,201,122,0.4);
+  box-shadow: 0 0 20px rgba(200,134,10,0.1);
+}
+
+/* ===================== UTILS ===================== */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- =================== HOME =================== -->
+<div class="screen active" id="homeScreen">
+  <div class="home-logo">🎲</div>
+  <div class="home-title">GAME TRACKER</div>
+  <div class="home-sub">Elige tu juego</div>
+
+  <div class="game-select-grid">
+
+    <div class="game-card mus" onclick="goTo('musSetupScreen')">
+      <div class="game-card-icon">🃏</div>
+      <div class="game-card-text">
+        <h3>MUS</h3>
+        <p>Sistema tradicional · Piedras y amarragos · 40 puntos por equipo</p>
+      </div>
+      <div class="game-card-arrow">›</div>
+    </div>
+
+    <div class="game-card generic" onclick="goTo('genericSetupScreen')">
+      <div class="game-card-icon">🎮</div>
+      <div class="game-card-text">
+        <h3>MARCADOR LIBRE</h3>
+        <p>Quick Stop, UNO, Parchís, Trivial… cualquier juego</p>
+      </div>
+      <div class="game-card-arrow">›</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =================== MUS SETUP =================== -->
+<div class="screen" id="musSetupScreen">
+  <div class="setup-header">
+    <button class="back-btn" onclick="goTo('homeScreen')">‹</button>
+    <h2>🃏 MUS · EQUIPOS</h2>
+  </div>
+  <div class="setup-body">
+    <div>
+      <div class="field-label">Equipo 1</div>
+      <input class="field-input" id="musTeam1Name" type="text" placeholder="Nombre del equipo (ej: Los Ases)" maxlength="18"/>
+      <div style="height:0.6rem"></div>
+      <div class="field-label" style="margin-top:0.6rem">Jugadores del equipo 1</div>
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">
+        <input class="field-input" id="musP1" type="text" placeholder="Jugador 1" maxlength="14" style="flex:1"/>
+        <input class="field-input" id="musP2" type="text" placeholder="Jugador 2" maxlength="14" style="flex:1"/>
+      </div>
+    </div>
+    <div>
+      <div class="field-label">Equipo 2</div>
+      <input class="field-input" id="musTeam2Name" type="text" placeholder="Nombre del equipo (ej: Los Reyes)" maxlength="18"/>
+      <div style="height:0.6rem"></div>
+      <div class="field-label" style="margin-top:0.6rem">Jugadores del equipo 2</div>
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">
+        <input class="field-input" id="musP3" type="text" placeholder="Jugador 3" maxlength="14" style="flex:1"/>
+        <input class="field-input" id="musP4" type="text" placeholder="Jugador 4" maxlength="14" style="flex:1"/>
+      </div>
+    </div>
+    <div>
+      <div class="field-label">¿Cuántos juegos para ganar?</div>
+      <div style="display:flex;gap:0.5rem">
+        <div style="display:flex;align-items:center;gap:0.5rem;flex:1">
+          <input class="field-input" id="musGamesToWin" type="number" value="5" min="1" max="20" style="width:80px;text-align:center"/>
+          <span style="color:#5a4020;font-size:0.85rem;font-weight:600">juegos (por defecto 5)</span>
+        </div>
+      </div>
+    </div>
+    <button class="start-btn mus" onclick="startMus()">▶ EMPEZAR PARTIDA</button>
+  </div>
+</div>
+
+<!-- =================== MUS GAME =================== -->
+<div class="screen" id="musScreen">
+  <div class="game-topbar">
+    <button class="back-btn" style="border-color:#3d2b1a" onclick="confirmReset('mus')">‹</button>
+    <div class="game-title-bar">
+      <div class="gtitle" style="color:#e8c97a">🃏 MUS</div>
+      <div class="gsub" id="musRoundLabel">Partida en curso</div>
+    </div>
+    <div id="musJuegoCount" style="font-family:'Bebas Neue',cursive;font-size:1rem;color:#5a4020;letter-spacing:1px"></div>
+  </div>
+
+  <div class="mus-win-bar">
+    <span>Meta: <span class="mus-win-info" id="musWinTarget">5 juegos</span></span>
+    <span id="musPartialInfo">Puntos actuales por juego</span>
+  </div>
+
+  <div class="mus-board" id="musBoard">
+    <!-- rendered by JS -->
+  </div>
+
+  <div class="mus-actions">
+    <button class="mus-action-btn" onclick="undoMusPoint()">
+      <span class="icon">↩️</span>
+      <span>Deshacer</span>
+    </button>
+    <button class="mus-action-btn primary" onclick="openMusModal()">
+      <span class="icon">+</span>
+      <span>Sumar Puntos</span>
+    </button>
+    <button class="mus-action-btn" onclick="showMusWinner()">
+      <span class="icon">🏆</span>
+      <span>Ganador</span>
+    </button>
+  </div>
+</div>
+
+<!-- =================== GENERIC SETUP =================== -->
+<div class="screen" id="genericSetupScreen">
+  <div class="setup-header">
+    <button class="back-btn" onclick="goTo('homeScreen')">‹</button>
+    <h2 style="color:#7ab8e8">🎮 NUEVA PARTIDA</h2>
+  </div>
+  <div class="setup-body">
+    <div>
+      <div class="field-label">Nombre del juego</div>
+      <input class="field-input" id="genericGameName" type="text" placeholder="Quick Stop, UNO, Trivial…" maxlength="24"/>
+    </div>
+    <div>
+      <div class="field-label">Puntos para ganar (opcional)</div>
+      <input class="field-input" id="genericWinScore" type="number" placeholder="ej: 100 · déjalo vacío para sin límite" min="1"/>
+    </div>
+    <div>
+      <div class="field-label">Jugadores</div>
+      <div class="players-list" id="genericPlayersList"></div>
+      <div class="add-player-row" style="margin-top:0.6rem">
+        <input class="field-input" id="genericPlayerInput" type="text" placeholder="Nombre del jugador…" maxlength="16"/>
+        <button class="btn-icon" style="background:#1a6ea8;color:#fff" onclick="addGenericPlayer()">+</button>
+      </div>
+    </div>
+    <button class="start-btn generic" onclick="startGeneric()">▶ EMPEZAR PARTIDA</button>
+  </div>
+</div>
+
+<!-- =================== GENERIC GAME =================== -->
+<div class="screen" id="genericScreen">
+  <div class="generic-topbar">
+    <button class="back-btn" style="border-color:#1a2a3a" onclick="confirmReset('generic')">‹</button>
+    <div class="game-title-bar">
+      <div class="gtitle" style="color:#7ab8e8" id="genericTitleDisplay">PARTIDA</div>
+      <div class="gsub" id="genericSubLabel">Marcador libre</div>
+    </div>
+  </div>
+
+  <!-- custom score row -->
+  <div class="custom-score-row">
+    <select id="customPlayerSelect"></select>
+    <input type="number" id="customScoreInput" placeholder="±pts"/>
+    <button class="apply-btn" onclick="applyCustomScore()">SUMAR</button>
+  </div>
+
+  <div class="generic-board">
+    <div class="generic-players-list" id="genericPlayersList2"></div>
+  </div>
+
+  <div class="generic-bottom">
+    <button class="generic-bottom-btn" onclick="undoGenericScore()">
+      <span class="icon">↩️</span>
+      <span>Deshacer</span>
+    </button>
+    <button class="generic-bottom-btn" onclick="showGenericWinner()">
+      <span class="icon">🏆</span>
+      <span>Ganador</span>
+    </button>
+    <button class="generic-bottom-btn danger" onclick="confirmReset('generic')">
+      <span class="icon">🔄</span>
+      <span>Reiniciar</span>
+    </button>
+  </div>
+</div>
+
+<!-- =================== MUS SCORE MODAL =================== -->
+<div class="modal-overlay" id="musModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">+ SUMAR PUNTOS</div>
+    <div class="punto-grid" id="musPuntoGrid">
+      <!-- rendered by JS -->
+    </div>
+    <button class="modal-confirm-btn mus" onclick="applyMusPoints()">CONFIRMAR PUNTOS</button>
+  </div>
+</div>
+
+<!-- =================== WINNER OVERLAY =================== -->
+<div class="winner-overlay" id="winnerOverlay">
+  <div class="winner-card">
+    <div class="winner-trophy">🏆</div>
+    <div class="winner-title" id="winnerName">GANADOR</div>
+    <div class="winner-sub" id="winnerSub">¡Enhorabuena!</div>
+    <div class="winner-btns">
+      <button class="winner-btn primary" onclick="closeWinner()">¡GENIAL!</button>
+      <button class="winner-btn secondary" onclick="resetCurrent()">NUEVA PARTIDA</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== NAVIGATION =====================
+const COLORS = ['#e94560','#4caf82','#f5a623','#5b9cf6','#c77dff','#ff9f43','#1dd1a1','#ff6b6b'];
+let currentGame = null;
+
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+function showToast(msg, duration=2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ===================== MUS GAME =====================
+const MUS_PUNTOS_NAMES = ['Grande', 'Chica', 'Pares', 'Juego/Punto'];
+let musState = {};
+
+function startMus() {
+  const t1 = document.getElementById('musTeam1Name').value.trim() || 'Equipo 1';
+  const t2 = document.getElementById('musTeam2Name').value.trim() || 'Equipo 2';
+  const p1 = document.getElementById('musP1').value.trim() || 'J1';
+  const p2 = document.getElementById('musP2').value.trim() || 'J2';
+  const p3 = document.getElementById('musP3').value.trim() || 'J3';
+  const p4 = document.getElementById('musP4').value.trim() || 'J4';
+  const win = parseInt(document.getElementById('musGamesToWin').value) || 5;
+
+  musState = {
+    teams: [
+      { name: t1, players: [p1, p2], piedras: 0, juegos: 0 }, // 5 piedras = 1 juego, win=juegos
+      { name: t2, players: [p3, p4], piedras: 0, juegos: 0 }
+    ],
+    gamesToWin: win,
+    history: [] // [{team: 0|1, piedras: n}]
+  };
+  currentGame = 'mus';
+
+  document.getElementById('musWinTarget').textContent = `${win} juegos`;
+  renderMusBoard();
+  goTo('musScreen');
+}
+
+function renderMusBoard() {
+  const board = document.getElementById('musBoard');
+  const state = musState;
+  const leading = state.teams[0].juegos > state.teams[1].juegos ? 0 :
+                  state.teams[1].juegos > state.teams[0].juegos ? 1 : -1;
+
+  board.innerHTML = state.teams.map((team, ti) => {
+    const isLeading = leading === ti;
+    // Stones: each juego = 5 piedras represented as amarragos + remaining stones
+    const totalPiedras = team.piedras; // 0..4 current partial
+    const juegos = team.juegos;
+
+    // Render amarragos (each = 5 piedras)
+    let stoneHtml = '';
+    for (let j = 0; j < juegos; j++) {
+      stoneHtml += `<span class="amarrago-mark" title="5 piedras">🟤</span>`;
+    }
+    // Remaining stones this juego
+    for (let p = 0; p < 5; p++) {
+      stoneHtml += `<div class="stone ${p < totalPiedras ? '' : 'spent'}"></div>`;
+    }
+
+    const pct = Math.min(100, Math.round(((juegos * 5 + totalPiedras) / (state.gamesToWin * 5)) * 100));
+
+    return `
+      <div class="mus-team-card ${isLeading ? 'leading' : ''}">
+        <div class="mus-progress-bar"><div class="mus-progress-fill" style="width:${pct}%"></div></div>
+        <div class="mus-team-header">
+          <div>
+            <div class="mus-team-name">${esc(team.name)}</div>
+            <div class="mus-team-players">${esc(team.players[0])} · ${esc(team.players[1])}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="mus-total-num">${juegos}<span>/ ${state.gamesToWin} jgos</span></div>
+          </div>
+        </div>
+        <div class="mus-games-row">
+          <div class="mus-juegos-display">
+            <div class="mus-game-label">Piedras y amarragos</div>
+            <div class="juego-stones">${stoneHtml}</div>
+            <div style="margin-top:0.4rem;font-size:0.75rem;color:#5a4020">
+              ${totalPiedras}/5 piedras · ${juegos} amarragos
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.5rem;padding:0.5rem 1.2rem 1rem">
+          <button class="mus-stone-btn" style="flex:1" onclick="addPiedra(${ti}, 1)">+ 1 Piedra</button>
+          <button class="mus-stone-btn" onclick="addPiedra(${ti}, -1)" style="color:#c87050">− 1</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Update subheader
+  const t = musState.teams;
+  document.getElementById('musRoundLabel').textContent =
+    `${t[0].name} ${t[0].juegos} – ${t[1].juegos} ${t[1].name}`;
+}
+
+function addPiedra(teamIdx, delta) {
+  const team = musState.teams[teamIdx];
+  const prev = { piedras: team.piedras, juegos: team.juegos };
+  team.piedras += delta;
+
+  if (team.piedras >= 5) {
+    team.piedras -= 5;
+    team.juegos += 1;
+    showToast(`🏅 ¡${team.name} consigue un juego! (${team.juegos}/${musState.gamesToWin})`);
+    if (team.juegos >= musState.gamesToWin) {
+      renderMusBoard();
+      setTimeout(() => showMusWinner(teamIdx), 400);
+      return;
+    }
+  } else if (team.piedras < 0) {
+    if (team.juegos > 0) {
+      team.juegos -= 1;
+      team.piedras += 5;
+    } else {
+      team.piedras = 0;
+    }
+  }
+
+  musState.history.push({ teamIdx, prevPiedras: prev.piedras, prevJuegos: prev.juegos });
+  renderMusBoard();
+}
+
+function openMusModal() {
+  // Build grid: for each team, add points
+  const grid = document.getElementById('musPuntoGrid');
+  grid.innerHTML = musState.teams.map((team, ti) =>
+    `<div class="punto-item">
+      <div class="punto-item-label">${esc(team.name)}</div>
+      <div class="punto-item-controls">
+        <button class="punto-tiny-btn" onclick="changePuntoVal(${ti},-1)">−</button>
+        <span class="punto-val" id="puntoVal_${ti}">0</span>
+        <button class="punto-tiny-btn" onclick="changePuntoVal(${ti},1)">+</button>
+      </div>
+    </div>`
+  ).join('');
+  document.getElementById('musModal').classList.add('show');
+}
+
+function changePuntoVal(ti, delta) {
+  const el = document.getElementById(`puntoVal_${ti}`);
+  let v = parseInt(el.textContent) + delta;
+  if (v < 0) v = 0;
+  el.textContent = v;
+}
+
+function applyMusPoints() {
+  musState.teams.forEach((team, ti) => {
+    const v = parseInt(document.getElementById(`puntoVal_${ti}`)?.textContent) || 0;
+    for (let i = 0; i < v; i++) addPiedra(ti, 1);
+  });
+  document.getElementById('musModal').classList.remove('show');
+}
+
+function undoMusPoint() {
+  if (!musState.history?.length) { showToast('Nada que deshacer'); return; }
+  const last = musState.history.pop();
+  const team = musState.teams[last.teamIdx];
+  team.piedras = last.prevPiedras;
+  team.juegos = last.prevJuegos;
+  renderMusBoard();
+  showToast('↩️ Punto deshecho');
+}
+
+function showMusWinner(forcedIdx) {
+  const t = musState.teams;
+  let winnerIdx = forcedIdx;
+  if (winnerIdx === undefined) {
+    if (t[0].juegos === t[1].juegos && t[0].piedras === t[1].piedras) {
+      showToast('¡Empate! Nadie gana aún.');
+      return;
+    }
+    winnerIdx = (t[0].juegos > t[1].juegos) ? 0 :
+                (t[1].juegos > t[0].juegos) ? 1 :
+                (t[0].piedras >= t[1].piedras) ? 0 : 1;
+  }
+  const winner = t[winnerIdx];
+  const loser = t[1 - winnerIdx];
+  document.getElementById('winnerName').textContent = winner.name.toUpperCase();
+  document.getElementById('winnerSub').textContent =
+    `${winner.juegos} juegos vs ${loser.juegos} · ¡${winner.players.join(' y ')} ganan!`;
+  document.getElementById('winnerOverlay').classList.add('show');
+}
+
+// Close modals
+document.getElementById('musModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('musModal')) document.getElementById('musModal').classList.remove('show');
+});
+
+// ===================== GENERIC GAME =====================
+let genericState = {};
+let pendingGenericPlayers = [];
+
+document.getElementById('genericPlayerInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addGenericPlayer();
+});
+
+function addGenericPlayer() {
+  const input = document.getElementById('genericPlayerInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (pendingGenericPlayers.find(p => p.toLowerCase() === name.toLowerCase())) {
+    showToast('Ese jugador ya existe'); return;
+  }
+  if (pendingGenericPlayers.length >= 8) { showToast('Máximo 8 jugadores'); return; }
+  pendingGenericPlayers.push(name);
+  input.value = '';
+  renderGenericSetupList();
+  input.focus();
+}
+
+function renderGenericSetupList() {
+  const list = document.getElementById('genericPlayersList');
+  list.innerHTML = pendingGenericPlayers.map((name, i) => `
+    <div class="player-row">
+      <div class="player-color-dot" style="background:${COLORS[i % COLORS.length]}"></div>
+      <div class="player-row-name">${esc(name)}</div>
+      <button class="player-row-remove" onclick="removeGenericPlayer(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function removeGenericPlayer(i) {
+  pendingGenericPlayers.splice(i, 1);
+  renderGenericSetupList();
+}
+
+function startGeneric() {
+  if (pendingGenericPlayers.length < 2) { showToast('¡Necesitas al menos 2 jugadores!'); return; }
+  const gameName = document.getElementById('genericGameName').value.trim() || 'Partida';
+  const winScore = parseInt(document.getElementById('genericWinScore').value) || null;
+
+  genericState = {
+    gameName,
+    winScore,
+    players: pendingGenericPlayers.map((name, i) => ({
+      name,
+      color: COLORS[i % COLORS.length],
+      score: 0,
+      history: []
+    })),
+    history: [] // [{playerIdx, delta}]
+  };
+  currentGame = 'generic';
+
+  document.getElementById('genericTitleDisplay').textContent = gameName.toUpperCase();
+  document.getElementById('genericSubLabel').textContent = winScore ? `Meta: ${winScore} puntos` : 'Marcador libre';
+
+  renderGenericSelect();
+  renderGenericBoard();
+  goTo('genericScreen');
+}
+
+function renderGenericSelect() {
+  const sel = document.getElementById('customPlayerSelect');
+  sel.innerHTML = genericState.players.map((p, i) =>
+    `<option value="${i}">${esc(p.name)}</option>`
+  ).join('');
+}
+
+function renderGenericBoard() {
+  const ranked = [...genericState.players]
+    .map((p, i) => ({ ...p, idx: i }))
+    .sort((a, b) => b.score - a.score);
+
+  const list = document.getElementById('genericPlayersList2');
+  list.innerHTML = ranked.map((p, rank) => {
+    const rankClass = rank === 0 ? 'r1' : rank === 1 ? 'r2' : rank === 2 ? 'r3' : 'rn';
+    const rankLabel = rank === 0 ? '1' : rank === 1 ? '2' : rank === 2 ? '3' : `${rank+1}`;
+    const histHtml = p.history.slice(-6).map(h =>
+      `<span class="ph ${h >= 0 ? 'p' : 'n'}">${h >= 0 ? '+' : ''}${h}</span>`
+    ).join('');
+    const isLeading = rank === 0;
+
+    return `
+      <div class="generic-player-row">
+        <div class="generic-rank-badge ${rankClass}">${rankLabel}</div>
+        <div class="generic-player-info">
+          <div class="generic-player-name">
+            <span class="pdot" style="background:${p.color}"></span>
+            ${esc(p.name)}
+          </div>
+          <div class="generic-player-history">${histHtml || '<span style="color:#2a3a4a">Sin puntos aún</span>'}</div>
+        </div>
+        <div class="generic-score-area">
+          <div class="score-display ${isLeading ? 'leading' : ''}">${p.score}</div>
+          <div class="delta-btns">
+            <button class="delta-btn plus" onclick="quickGenericScore(${p.idx}, 1)">+</button>
+            <button class="delta-btn minus" onclick="quickGenericScore(${p.idx}, -1)">−</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function quickGenericScore(playerIdx, delta) {
+  applyGenericDelta(playerIdx, delta);
+}
+
+function applyCustomScore() {
+  const playerIdx = parseInt(document.getElementById('customPlayerSelect').value);
+  const delta = parseInt(document.getElementById('customScoreInput').value) || 0;
+  if (delta === 0) { showToast('Escribe los puntos a sumar'); return; }
+  document.getElementById('customScoreInput').value = '';
+  applyGenericDelta(playerIdx, delta);
+}
+
+function applyGenericDelta(playerIdx, delta) {
+  const player = genericState.players[playerIdx];
+  genericState.history.push({ playerIdx, delta });
+  player.score += delta;
+  player.history.push(delta);
+  renderGenericBoard();
+
+  if (genericState.winScore && player.score >= genericState.winScore) {
+    setTimeout(() => showGenericWinner(), 300);
+  }
+}
+
+function undoGenericScore() {
+  if (!genericState.history?.length) { showToast('Nada que deshacer'); return; }
+  const last = genericState.history.pop();
+  const player = genericState.players[last.playerIdx];
+  player.score -= last.delta;
+  player.history.pop();
+  renderGenericBoard();
+  showToast('↩️ Punto deshecho');
+}
+
+function showGenericWinner() {
+  const ranked = [...genericState.players].sort((a, b) => b.score - a.score);
+  const winner = ranked[0];
+  document.getElementById('winnerName').textContent = winner.name.toUpperCase();
+  document.getElementById('winnerSub').textContent = `${winner.score} puntos · ¡${esc(winner.name)} gana ${esc(genericState.gameName)}!`;
+  document.getElementById('winnerOverlay').classList.add('show');
+}
+
+// ===================== WINNER & RESET =====================
+function closeWinner() {
+  document.getElementById('winnerOverlay').classList.remove('show');
+}
+
+function resetCurrent() {
+  closeWinner();
+  pendingGenericPlayers = [];
+  genericState = {};
+  musState = {};
+  currentGame = null;
+  document.getElementById('genericPlayersList').innerHTML = '';
+  document.getElementById('genericGameName').value = '';
+  document.getElementById('genericWinScore').value = '';
+  document.getElementById('musTeam1Name').value = '';
+  document.getElementById('musTeam2Name').value = '';
+  goTo('homeScreen');
+}
+
+function confirmReset(game) {
+  if (confirm('¿Volver al menú? Se perderá la partida actual.')) {
+    pendingGenericPlayers = [];
+    genericState = {};
+    musState = {};
+    goTo('homeScreen');
+  }
+}
+
+// ===================== UTILS =====================
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Prevent double tap zoom
+document.addEventListener('touchstart', function(){}, {passive:true});
+</script>
+</body>
+</html>
