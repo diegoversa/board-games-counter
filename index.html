@@ -188,9 +188,9 @@ html, body {
   min-width: 0; min-height: 0;
   transition: opacity .3s, filter .3s;
 }
-.pcard.leader  { box-shadow: 0 0 24px rgba(255,220,50,.3); }
-.pcard.elim    { opacity: .25; filter: grayscale(1); }
-.pcard.flipped { transform: rotate(180deg); }
+.pcard.leader   { box-shadow: 0 0 24px rgba(255,220,50,.3); }
+.pcard.elim     { opacity: .25; filter: grayscale(1); }
+.pcard.rot-down { transform: rotate(180deg); }
 
 .pcard-name {
   padding: .25rem .6rem;
@@ -481,13 +481,7 @@ function startGame() {
 
   goTo('game');
   renderAndBind();
-
-  // request fullscreen
-  try {
-    const el = document.documentElement;
-    if (el.requestFullscreen) el.requestFullscreen();
-    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  } catch(e) {}
+  tryFullscreen();
 }
 
 /* ── GRID LAYOUT HELPER ── */
@@ -503,13 +497,13 @@ function gridLayout(count) {
   return { cols: 4, rows: Math.ceil(count/4) };
 }
 
-/* ── FLIP HELPER ──
-   Right half of the grid is rotated 180° so those players
-   can read their card from the opposite side of the table.
-   "Right half" = column index >= cols/2  */
-function isFlipped(playerIndex, cols) {
-  const col = playerIndex % cols; // 0-based column
-  return col >= Math.ceil(cols / 2);
+/* ── ROTATION HELPER ──
+   The grid is meant to be used with the phone in PORTRAIT.
+   Top row(s) face upward (normal). Bottom row(s) face downward (rotated 180°).
+   This way players on each end of the table can read their card. */
+function isRotatedDown(playerIndex, cols, rows) {
+  const row = Math.floor(playerIndex / cols); // 0-based row
+  return row >= Math.ceil(rows / 2);
 }
 
 /* ── RENDER + BIND (always together) ── */
@@ -535,14 +529,14 @@ function renderGame() {
   area.innerHTML = gs.players.map((p, i) => {
     const rank    = sorted.findIndex(s => s._i === i);
     const leader  = rank === 0 && mode === 'score';
-    const flipped = isFlipped(i, cols);
+    const rotDown = isRotatedDown(i, cols, rows);
 
     if (mode === 'lives') {
       let hearts = '';
       for (let h = 0; h < gs.lives; h++)
         hearts += `<span class="heart${h >= p.livesLeft ? ' lost' : ''}" style="font-size:${hrtFs}">❤️</span>`;
       return `
-        <div class="pcard${p.eliminated ? ' elim' : ''}${flipped ? ' flipped' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
+        <div class="pcard${p.eliminated ? ' elim' : ''}${rotDown ? ' rot-down' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
           <div class="pcard-name">
             <div class="pcard-dot" style="background:${p.color}"></div>
             <div class="pcard-lbl">${esc(p.name)}</div>
@@ -560,7 +554,7 @@ function renderGame() {
         </div>`;
     } else {
       return `
-        <div class="pcard${leader ? ' leader' : ''}${flipped ? ' flipped' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
+        <div class="pcard${leader ? ' leader' : ''}${rotDown ? ' rot-down' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
           <div class="pcard-name">
             <div class="pcard-dot" style="background:${p.color}"></div>
             <div class="pcard-lbl">${esc(p.name)}</div>
@@ -736,17 +730,47 @@ function confirmBack() {
   if (confirm('¿Salir de la partida?')) resetToHome();
 }
 
-/* ── FULLSCREEN on rotate ── */
+/* ── FULLSCREEN ──
+   Android/Chrome: requestFullscreen works fine.
+   iOS Safari: fullscreen API blocked. We simulate it by scrolling
+   the address bar away, and show a one-time banner to add to homescreen. */
 function tryFullscreen() {
   try {
     const el = document.documentElement;
     if (document.fullscreenElement || document.webkitFullscreenElement) return;
-    if (el.requestFullscreen) el.requestFullscreen();
-    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    if (el.requestFullscreen) { el.requestFullscreen(); return; }
+    if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); return; }
   } catch(e) {}
+  // iOS fallback: scroll address bar away
+  setTimeout(() => window.scrollTo(0, 1), 100);
+  // Show homescreen tip once
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  if (isIOS && !isStandalone && !localStorage.getItem('hs_tip_shown')) {
+    localStorage.setItem('hs_tip_shown', '1');
+    showHsTip();
+  }
 }
-window.addEventListener('orientationchange', () => setTimeout(tryFullscreen, 300));
-window.screen?.orientation?.addEventListener('change', () => setTimeout(tryFullscreen, 300));
+
+function showHsTip() {
+  const tip = document.createElement('div');
+  tip.style.cssText = `
+    position:fixed;bottom:0;left:0;right:0;z-index:9999;
+    background:#1a1a1a;border-top:1px solid #333;
+    padding:1rem 1.2rem 2rem;font-family:Barlow,sans-serif;
+    display:flex;flex-direction:column;gap:.5rem;
+    animation:slideUp .3s ease;
+  `;
+  tip.innerHTML = `
+    <div style="font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#666">Para pantalla completa en iPhone</div>
+    <div style="font-size:.9rem;color:#aaa">Pulsa <strong style="color:#fff">Compartir</strong> → <strong style="color:#fff">Añadir a pantalla de inicio</strong> 📲</div>
+    <button onclick="this.parentElement.remove()" style="margin-top:.3rem;background:#333;border:none;border-radius:10px;color:#fff;padding:.6rem;font-size:.85rem;cursor:pointer">Entendido</button>
+  `;
+  document.body.appendChild(tip);
+}
+
+window.addEventListener('orientationchange', () => setTimeout(tryFullscreen, 400));
+window.screen?.orientation?.addEventListener('change', () => setTimeout(tryFullscreen, 400));
 
 /* ── UTILS ── */
 function toast(msg) {
