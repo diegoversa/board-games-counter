@@ -24,7 +24,9 @@ html, body {
   overscroll-behavior: none;
 }
 
-/* SCREENS */
+/* ═══════════════════════════════════
+   SCREENS
+═══════════════════════════════════ */
 .screen {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
@@ -35,7 +37,9 @@ html, body {
 }
 .screen.active { opacity: 1; pointer-events: all; }
 
-/* HOME */
+/* ═══════════════════════════════════
+   HOME
+═══════════════════════════════════ */
 #home {
   background: #0a0a0a;
   align-items: center; justify-content: center;
@@ -61,14 +65,18 @@ html, body {
 .mode-card:active { transform: scale(.96); }
 .mode-card.lives { background: linear-gradient(135deg,#180008,#110000); border-color: #3a0015; }
 .mode-card.score { background: linear-gradient(135deg,#001a0a,#001018); border-color: #003a20; }
+.mode-card.mus   { background: linear-gradient(135deg,#1a1000,#0d0800); border-color: #5a3a00; }
 .mode-icon { font-size: 2.2rem; flex-shrink: 0; }
 .mode-text h3 { font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; }
 .mode-text p  { font-size: .74rem; color: #444; margin-top: .15rem; line-height: 1.4; }
 .mode-card.lives .mode-text h3 { color: #ff4060; }
 .mode-card.score .mode-text h3 { color: #40d090; }
+.mode-card.mus   .mode-text h3 { color: #e8c97a; }
 .mode-arrow { margin-left: auto; color: #333; font-size: 1.1rem; }
 
-/* SETUP */
+/* ═══════════════════════════════════
+   SETUP
+═══════════════════════════════════ */
 #setup { background: #0a0a0a; }
 .setup-topbar {
   padding: 3rem 1.2rem .8rem;
@@ -85,6 +93,7 @@ html, body {
 .setup-mode-title { font-family:'Bebas Neue',cursive; font-size: 1.6rem; letter-spacing: 3px; }
 .setup-mode-title.lives { color: #ff4060; }
 .setup-mode-title.score { color: #40d090; }
+.setup-mode-title.mus   { color: #e8c97a; }
 .setup-body {
   flex: 1; overflow-y: auto; padding: 1.5rem 1.2rem 2rem;
   display: flex; flex-direction: column; gap: 1.3rem;
@@ -128,6 +137,7 @@ html, body {
 .add-btn:active { transform: scale(.9); }
 .add-btn.lives { background: #ff4060; color: #fff; }
 .add-btn.score { background: #40d090; color: #000; }
+.add-btn.mus   { background: #c8860a; color: #000; }
 .start-btn {
   width: 100%; padding: 1.05rem; border: none; border-radius: 16px;
   font-family: 'Bebas Neue',cursive; font-size: 1.35rem; letter-spacing: 3px;
@@ -136,17 +146,17 @@ html, body {
 .start-btn:active { transform: scale(.97); }
 .start-btn.lives { background: linear-gradient(135deg,#ff4060,#c0002a); color: #fff; }
 .start-btn.score { background: linear-gradient(135deg,#40d090,#008a50); color: #000; }
+.start-btn.mus   { background: linear-gradient(135deg,#e8c97a,#c8860a); color: #000; }
 .hidden { display: none !important; }
 
-/* GAME — overflow:hidden on the screen itself */
+/* ═══════════════════════════════════
+   GENERIC GAME SCREEN
+═══════════════════════════════════ */
 #game { overflow: hidden; background: #080808; }
-
-/* game layout always visible — screen opacity handles show/hide */
 .game-layout {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
 }
-
 .game-bar {
   display: flex; align-items: center;
   padding: .3rem .7rem;
@@ -169,14 +179,10 @@ html, body {
 }
 .bar-btn:active { background: #1a1a1a; color: #777; }
 
-/* GRID AREA */
+/* GRID */
 .players-area {
-  flex: 1;
-  display: grid;
-  padding: .35rem;
-  gap: .35rem;
-  overflow: hidden;
-  /* columns/rows set by JS */
+  flex: 1; display: grid;
+  padding: .35rem; gap: .35rem; overflow: hidden;
 }
 
 /* PLAYER CARD */
@@ -188,8 +194,10 @@ html, body {
   min-width: 0; min-height: 0;
   transition: opacity .3s, filter .3s;
 }
-.pcard.leader   { box-shadow: 0 0 24px rgba(255,220,50,.3); }
-.pcard.elim     { opacity: .25; filter: grayscale(1); }
+.pcard.leader  { box-shadow: 0 0 24px rgba(255,220,50,.3); }
+.pcard.elim    { opacity: .25; filter: grayscale(1); }
+/* rot-up = top half, faces OUTWARD (toward top edge) = normal */
+/* rot-down = bottom half, faces OUTWARD (toward bottom edge) = 180deg */
 .pcard.rot-down { transform: rotate(180deg); }
 
 .pcard-name {
@@ -198,12 +206,12 @@ html, body {
   flex-shrink: 0; height: 26px;
   background: rgba(0,0,0,.25);
 }
-.pcard-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: rgba(255,255,255,.6); }
-.pcard-lbl {
+.pcard-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: rgba(255,255,255,.5); }
+.pcard-lbl  {
   font-size: .62rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; color: rgba(255,255,255,.85);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; color: rgba(255,255,255,.8);
 }
-.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .78rem; color: rgba(255,255,255,.5); flex-shrink: 0; }
+.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .78rem; color: rgba(255,255,255,.4); flex-shrink: 0; }
 
 .pcard-tap {
   flex: 1; display: flex; flex-direction: column;
@@ -211,14 +219,13 @@ html, body {
   cursor: pointer; position: relative; overflow: hidden;
   -webkit-tap-highlight-color: transparent;
 }
-.pcard-tap:active { background: rgba(255,255,255,.025); }
+.pcard-tap:active { background: rgba(0,0,0,.15); }
 
 .pcard-val {
   font-family: 'Bebas Neue', cursive;
   line-height: 1; text-align: center; pointer-events: none;
+  color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.4);
   transition: transform .1s;
-  color: #fff;
-  text-shadow: 0 2px 12px rgba(0,0,0,.4);
 }
 .pcard-tap:active .pcard-val { transform: scale(.88); }
 
@@ -235,8 +242,8 @@ html, body {
   font-family: 'Bebas Neue', cursive; font-size: 2rem;
   pointer-events: none; opacity: 0;
 }
-.pcard-delta.pos { color: #40d090; }
-.pcard-delta.neg { color: #ff4060; }
+.pcard-delta.pos { color: #fff; text-shadow: 0 0 10px rgba(64,208,144,.8); }
+.pcard-delta.neg { color: #fff; text-shadow: 0 0 10px rgba(255,64,96,.8); }
 .pcard-delta.anim { animation: dFloat .65s ease-out forwards; }
 @keyframes dFloat {
   0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -259,7 +266,7 @@ html, body {
 }
 .pcard-btn {
   flex: 1; border: none; background: transparent;
-  color: rgba(255,255,255,.45); cursor: pointer;
+  color: rgba(255,255,255,.4); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Bebas Neue', cursive; font-size: .85rem; letter-spacing: 1px;
   transition: background .1s, color .1s;
@@ -268,7 +275,230 @@ html, body {
 .pcard-btn.minus:active { background: rgba(0,0,0,.3); color: #fff; }
 .pcard-btn.plus:active  { background: rgba(255,255,255,.15); color: #fff; }
 
-/* WINNER */
+/* ═══════════════════════════════════
+   MUS SCREEN
+═══════════════════════════════════ */
+#mus {
+  background: #0a0600;
+  overflow: hidden;
+}
+.mus-layout {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+}
+.mus-topbar {
+  display: flex; align-items: center;
+  padding: .3rem .7rem;
+  background: #050300; border-bottom: 1px solid #2a1800;
+  gap: .5rem; flex-shrink: 0; height: 36px;
+}
+.mus-topbar-title { font-family:'Bebas Neue',cursive; font-size: 1rem; letter-spacing: 3px; color: #e8c97a; }
+.mus-juego-badge {
+  font-size: .6rem; font-weight: 800; letter-spacing: 1px;
+  padding: .18rem .5rem; border-radius: 5px;
+  background: rgba(232,201,122,.12); color: #e8c97a;
+  text-transform: uppercase;
+}
+.mus-bar-btn {
+  height: 24px; padding: 0 .6rem; border-radius: 6px;
+  border: 1px solid #3a2000; background: #1a0d00;
+  color: #7a5020; font-size: .65rem; font-weight: 700; letter-spacing: .5px;
+  cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: .25rem;
+}
+.mus-bar-btn:active { background: #2a1500; color: #e8c97a; }
+
+/* Two team cards side by side */
+.mus-teams {
+  flex: 1; display: flex; gap: .4rem; padding: .4rem; overflow: hidden;
+}
+.mus-team {
+  flex: 1; border-radius: 16px; overflow: hidden;
+  display: flex; flex-direction: column;
+  border: 1px solid #3a2000;
+  background: linear-gradient(160deg,#1a0d00,#0d0600);
+  min-width: 0; min-height: 0;
+}
+.mus-team.winning { border-color: #c8860a; box-shadow: 0 0 20px rgba(200,134,10,.2); }
+
+.mus-team-header {
+  padding: .5rem .8rem;
+  background: rgba(0,0,0,.3);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  display: flex; align-items: center; gap: .5rem; flex-shrink: 0;
+}
+.mus-team-name {
+  font-family:'Bebas Neue',cursive; font-size: 1.1rem; letter-spacing: 2px; color: #e8c97a;
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mus-team-players { font-size: .62rem; color: #5a3a10; }
+
+/* Amarragos + piedras display */
+.mus-score-display {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .4rem;
+  padding: .5rem;
+}
+.mus-amarragos {
+  display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;
+}
+.mus-amarrago {
+  font-size: 1.6rem; transition: transform .2s;
+}
+.mus-amarrago.empty { opacity: .12; filter: grayscale(1); }
+
+.mus-piedras-row {
+  display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+}
+.mus-piedra {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f0d080, #c8860a);
+  box-shadow: 0 1px 3px rgba(0,0,0,.5);
+  transition: transform .15s;
+}
+.mus-piedra.empty {
+  background: #1a1200;
+  border: 1px solid #2a1800;
+  box-shadow: none;
+}
+
+.mus-total-text {
+  font-family:'Bebas Neue',cursive; font-size: .85rem;
+  color: #5a3a10; letter-spacing: 1px;
+}
+
+/* Progress bar */
+.mus-progress {
+  height: 3px; background: #1a0d00;
+  flex-shrink: 0;
+}
+.mus-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c8860a, #e8c97a);
+  transition: width .4s ease;
+}
+
+/* Quick +/- buttons */
+.mus-quick-btns {
+  display: flex; gap: 0; flex-shrink: 0;
+  border-top: 1px solid #2a1800; height: 40px;
+  background: rgba(0,0,0,.3);
+}
+.mus-qbtn {
+  flex: 1; border: none; background: transparent;
+  color: #5a3a10; cursor: pointer; font-family:'Bebas Neue',cursive;
+  font-size: .85rem; letter-spacing: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .1s, color .1s;
+}
+.mus-qbtn + .mus-qbtn { border-left: 1px solid #2a1800; }
+.mus-qbtn.minus:active { background: rgba(200,0,0,.15); color: #ff6060; }
+.mus-qbtn.plus:active  { background: rgba(200,134,10,.15); color: #e8c97a; }
+
+/* MUS bottom action */
+.mus-bottom {
+  display: flex; gap: .4rem; padding: .4rem;
+  flex-shrink: 0; border-top: 1px solid #2a1800;
+  background: #050300;
+}
+.mus-action-btn {
+  flex: 1; padding: .7rem; border-radius: 12px;
+  border: 1px solid #3a2000; background: #1a0d00;
+  color: #e8c97a; font-family:'Barlow',sans-serif;
+  font-weight: 700; font-size: .8rem; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: .15rem;
+  transition: all .15s;
+}
+.mus-action-btn .icon { font-size: 1rem; }
+.mus-action-btn:active { background: #2a1500; transform: scale(.96); }
+.mus-action-btn.primary { background: linear-gradient(135deg,#2a1800,#1a0d00); border-color: #c8860a; }
+
+/* ═══════════════════════════════════
+   MUS RONDA MODAL (bottom sheet)
+═══════════════════════════════════ */
+.modal-ov {
+  position: fixed; inset: 0; z-index: 800;
+  background: rgba(0,0,0,.88);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.modal-ov.show { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  background: #120900; border: 1px solid #3a2000; border-bottom: none;
+  border-radius: 22px 22px 0 0;
+  width: 100%; max-width: 460px;
+  padding: 0 0 env(safe-area-inset-bottom);
+  animation: sheetUp .3s ease both;
+  max-height: 92vh; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
+.sheet-handle {
+  width: 36px; height: 4px; background: #3a2000;
+  border-radius: 2px; margin: 1rem auto .8rem;
+}
+.sheet-title {
+  font-family:'Bebas Neue',cursive; font-size: 1.4rem; letter-spacing: 3px;
+  color: #e8c97a; text-align: center; margin-bottom: 1rem; padding: 0 1rem;
+}
+.sheet-subtitle {
+  font-size: .72rem; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: #5a3a10;
+  text-align: center; margin-bottom: .8rem;
+}
+
+/* Lance rows */
+.lance-row {
+  display: flex; align-items: center;
+  padding: .7rem 1rem;
+  border-top: 1px solid rgba(255,255,255,.04);
+  gap: .6rem;
+}
+.lance-icon { font-size: 1.2rem; flex-shrink: 0; width: 28px; text-align: center; }
+.lance-name { flex: 1; font-weight: 700; font-size: .9rem; }
+.lance-winner {
+  display: flex; gap: .4rem;
+}
+.team-chip {
+  padding: .35rem .7rem; border-radius: 8px; border: 1px solid transparent;
+  font-family:'Bebas Neue',cursive; font-size: .85rem; letter-spacing: 1px;
+  cursor: pointer; transition: all .15s; background: #1a0d00; color: #5a3a10;
+  border-color: #2a1800;
+}
+.team-chip.selected { color: #000; }
+.team-chip.t0.selected { background: #e8c97a; border-color: #e8c97a; }
+.team-chip.t1.selected { background: #c8860a; border-color: #c8860a; }
+.team-chip:active { transform: scale(.94); }
+
+.lance-pts {
+  display: flex; align-items: center; gap: .3rem;
+  flex-shrink: 0;
+}
+.lance-pts-btn {
+  width: 28px; height: 28px; border-radius: 7px;
+  border: 1px solid #2a1800; background: #0d0600;
+  color: #e8c97a; font-size: 1rem; font-weight: 800;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .1s;
+}
+.lance-pts-btn:active { background: #1a0d00; }
+.lance-pts-val {
+  font-family:'Bebas Neue',cursive; font-size: 1.3rem;
+  color: #e8c97a; min-width: 22px; text-align: center;
+}
+
+.sheet-confirm {
+  width: calc(100% - 2rem); margin: 1rem 1rem 1.5rem;
+  padding: 1rem; border: none; border-radius: 14px;
+  background: linear-gradient(135deg,#e8c97a,#c8860a); color: #000;
+  font-family:'Bebas Neue',cursive; font-size: 1.3rem; letter-spacing: 3px;
+  cursor: pointer; transition: transform .15s;
+}
+.sheet-confirm:active { transform: scale(.97); }
+
+/* ═══════════════════════════════════
+   WINNER OVERLAY
+═══════════════════════════════════ */
 .winner-ov {
   position: fixed; inset: 0; z-index: 999;
   background: rgba(0,0,0,.93);
@@ -295,6 +525,7 @@ html, body {
 .w-btn:active { transform: scale(.97); }
 .w-btn.primary.lives { background: linear-gradient(135deg,#ff4060,#c0002a); color:#fff; }
 .w-btn.primary.score { background: linear-gradient(135deg,#40d090,#008a50); color:#000; }
+.w-btn.primary.mus   { background: linear-gradient(135deg,#e8c97a,#c8860a); color:#000; }
 .w-btn.sec { background: #0d0d0d; color: #3a3a3a; border: 1px solid #1e1e1e; }
 
 /* TOAST */
@@ -319,24 +550,23 @@ html, body {
   <div class="mode-cards">
     <div class="mode-card lives" onclick="openSetup('lives')">
       <div class="mode-icon">❤️</div>
-      <div class="mode-text">
-        <h3>VIDAS</h3>
-        <p>Empiezas con vidas · tap = perder una · el último en pie gana</p>
-      </div>
+      <div class="mode-text"><h3>VIDAS</h3><p>Empiezas con vidas · tap = perder una · el último gana</p></div>
       <div class="mode-arrow">›</div>
     </div>
     <div class="mode-card score" onclick="openSetup('score')">
       <div class="mode-icon">🏅</div>
-      <div class="mode-text">
-        <h3>PUNTUACIÓN</h3>
-        <p>Marcador ascendente · tap = sumar · el que más tiene gana</p>
-      </div>
+      <div class="mode-text"><h3>PUNTUACIÓN</h3><p>Marcador ascendente · tap = sumar · el que más tiene gana</p></div>
+      <div class="mode-arrow">›</div>
+    </div>
+    <div class="mode-card mus" onclick="openMusSetup()">
+      <div class="mode-icon">🃏</div>
+      <div class="mode-text"><h3>MUS</h3><p>2 equipos · piedras y amarragos · 40 piedras para ganar</p></div>
       <div class="mode-arrow">›</div>
     </div>
   </div>
 </div>
 
-<!-- SETUP -->
+<!-- SETUP (lives / score) -->
 <div class="screen" id="setup">
   <div class="setup-topbar">
     <button class="back-btn" onclick="goTo('home')">‹</button>
@@ -366,7 +596,42 @@ html, body {
   </div>
 </div>
 
-<!-- GAME -->
+<!-- MUS SETUP -->
+<div class="screen" id="musSetup">
+  <div class="setup-topbar">
+    <button class="back-btn" onclick="goTo('home')">‹</button>
+    <div class="setup-mode-title mus">🃏 MUS</div>
+  </div>
+  <div class="setup-body">
+    <div>
+      <div class="field-label">Nombre Equipo 1</div>
+      <input class="field-input" id="musT1" type="text" placeholder="Ej: Los Ases" maxlength="14"/>
+      <div style="height:.5rem"></div>
+      <div class="field-label" style="margin-top:.3rem">Jugadores</div>
+      <div style="display:flex;gap:.5rem">
+        <input class="field-input" id="musP1" type="text" placeholder="Jugador 1" maxlength="10" style="flex:1"/>
+        <input class="field-input" id="musP2" type="text" placeholder="Jugador 2" maxlength="10" style="flex:1"/>
+      </div>
+    </div>
+    <div>
+      <div class="field-label">Nombre Equipo 2</div>
+      <input class="field-input" id="musT2" type="text" placeholder="Ej: Los Reyes" maxlength="14"/>
+      <div style="height:.5rem"></div>
+      <div class="field-label" style="margin-top:.3rem">Jugadores</div>
+      <div style="display:flex;gap:.5rem">
+        <input class="field-input" id="musP3" type="text" placeholder="Jugador 3" maxlength="10" style="flex:1"/>
+        <input class="field-input" id="musP4" type="text" placeholder="Jugador 4" maxlength="10" style="flex:1"/>
+      </div>
+    </div>
+    <div>
+      <div class="field-label">Piedras para ganar el juego</div>
+      <input class="field-input" id="musPiedrasGoal" type="number" value="40" min="5" max="200" inputmode="numeric"/>
+    </div>
+    <button class="start-btn mus" onclick="startMus()">▶ EMPEZAR MUS</button>
+  </div>
+</div>
+
+<!-- GENERIC GAME SCREEN -->
 <div class="screen" id="game">
   <div class="game-layout">
     <div class="game-bar">
@@ -375,9 +640,44 @@ html, body {
       <div class="bar-spacer"></div>
       <button class="bar-btn" onclick="undoLast()">↩ deshacer</button>
       <button class="bar-btn" onclick="showWinner()">🏆 ganador</button>
-      <button class="bar-btn" onclick="confirmBack()">✕</button>
+      <button class="bar-btn" onclick="confirmBack('game')">✕</button>
     </div>
     <div class="players-area" id="playersArea"></div>
+  </div>
+</div>
+
+<!-- MUS GAME SCREEN -->
+<div class="screen" id="musGame">
+  <div class="mus-layout">
+    <div class="mus-topbar">
+      <div class="mus-topbar-title">🃏 MUS</div>
+      <div class="mus-juego-badge" id="musJuegoBadge">Juego 1</div>
+      <div class="bar-spacer"></div>
+      <button class="mus-bar-btn" id="musUndoBtn" onclick="musUndo()">↩</button>
+      <button class="mus-bar-btn" onclick="confirmBack('musGame')">✕</button>
+    </div>
+    <div class="mus-teams" id="musTeams"></div>
+    <div class="mus-bottom">
+      <button class="mus-action-btn primary" onclick="openRondaModal()">
+        <span class="icon">🎴</span>
+        <span>RONDA TERMINADA</span>
+      </button>
+      <button class="mus-action-btn" onclick="showMusWinner()">
+        <span class="icon">🏆</span>
+        <span>GANADOR</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MUS RONDA MODAL -->
+<div class="modal-ov" id="rondaModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">¿QUIÉN GANÓ CADA LANCE?</div>
+    <div class="sheet-subtitle">Pon los envites y selecciona el ganador</div>
+    <div id="lanceRows"></div>
+    <button class="sheet-confirm" onclick="applyRonda()">APUNTAR PIEDRAS</button>
   </div>
 </div>
 
@@ -397,23 +697,41 @@ html, body {
 <div class="toast" id="toast"></div>
 
 <script>
+/* ══════════════════════════════════════════
+   CONSTANTS & STATE
+══════════════════════════════════════════ */
 const COLORS = ['#ff4060','#40d090','#4a9eff','#ffb830','#c060ff','#ff6b30','#00d4cc','#ff80b0'];
-let mode    = 'lives';
-let gs      = {};
-let hist    = [];
+
+// Generic game state
+let mode = 'lives';
+let gs   = {};
+let hist = [];
 let pending = [];
 let flashPending = null;
-
-// tapGuard: per-player cooldown to prevent double-fire
 const tapGuard = {};
 
-/* ── NAV ── */
+// Mus state
+let mus = {};
+
+// Mus lances config
+const LANCES = [
+  { key:'grande',  icon:'👑', name:'Grande',  hasPares:false, defaultPts:1 },
+  { key:'chica',   icon:'🐭', name:'Chica',   hasPares:false, defaultPts:1 },
+  { key:'pares',   icon:'♊',  name:'Pares',   hasPares:true,  defaultPts:1 },
+  { key:'juego',   icon:'🃏', name:'Juego',   hasPares:true,  defaultPts:1 },
+];
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
 function goTo(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-/* ── SETUP ── */
+/* ══════════════════════════════════════════
+   GENERIC SETUP
+══════════════════════════════════════════ */
 function openSetup(m) {
   mode = m;
   pending = [];
@@ -456,7 +774,9 @@ function renderChips() {
   document.getElementById('playerCount').textContent = `(${pending.length}/8)`;
 }
 
-/* ── START ── */
+/* ══════════════════════════════════════════
+   GENERIC GAME START
+══════════════════════════════════════════ */
 function startGame() {
   if (pending.length < 2) { toast('¡Mínimo 2 jugadores!'); return; }
   const lives = parseInt(document.getElementById('livesCount').value)   || 3;
@@ -467,12 +787,10 @@ function startGame() {
     mode, lives, ppt, winScore: winSc,
     players: pending.map((name,i) => ({
       name, color: COLORS[i % COLORS.length],
-      livesLeft: lives, eliminated: false,
-      score: 0
+      livesLeft: lives, eliminated: false, score: 0
     }))
   };
-  hist = [];
-  flashPending = null;
+  hist = []; flashPending = null;
 
   const pill = document.getElementById('modePill');
   pill.textContent = mode === 'lives' ? 'VIDAS' : 'PUNTOS';
@@ -484,29 +802,30 @@ function startGame() {
   tryFullscreen();
 }
 
-/* ── GRID LAYOUT HELPER ── */
+/* ══════════════════════════════════════════
+   GRID & ROTATION
+══════════════════════════════════════════ */
 function gridLayout(count) {
-  if (count === 1) return { cols: 1, rows: 1 };
-  if (count === 2) return { cols: 2, rows: 1 };
-  if (count === 3) return { cols: 3, rows: 1 };
-  if (count === 4) return { cols: 2, rows: 2 };
-  if (count === 5) return { cols: 3, rows: 2 };
-  if (count === 6) return { cols: 3, rows: 2 };
-  if (count === 7) return { cols: 4, rows: 2 };
-  if (count === 8) return { cols: 4, rows: 2 };
-  return { cols: 4, rows: Math.ceil(count/4) };
+  if (count <= 2) return { cols:2, rows:1 };
+  if (count === 3) return { cols:3, rows:1 };
+  if (count === 4) return { cols:2, rows:2 };
+  if (count === 5) return { cols:3, rows:2 };
+  if (count === 6) return { cols:3, rows:2 };
+  if (count === 7) return { cols:4, rows:2 };
+  return { cols:4, rows:2 };
 }
 
-/* ── ROTATION HELPER ──
-   The grid is meant to be used with the phone in PORTRAIT.
-   Top row(s) face upward (normal). Bottom row(s) face downward (rotated 180°).
-   This way players on each end of the table can read their card. */
-function isRotatedDown(playerIndex, cols, rows) {
-  const row = Math.floor(playerIndex / cols); // 0-based row
+/* Top rows face OUTWARD (toward top = normal orientation)
+   Bottom rows face OUTWARD (toward bottom = rotated 180°)
+   "outward" means away from center of table */
+function isRotatedDown(idx, cols, rows) {
+  const row = Math.floor(idx / cols);
   return row >= Math.ceil(rows / 2);
 }
 
-/* ── RENDER + BIND (always together) ── */
+/* ══════════════════════════════════════════
+   RENDER GENERIC GAME
+══════════════════════════════════════════ */
 function renderAndBind() {
   renderGame();
   attachEvents();
@@ -521,28 +840,29 @@ function renderGame() {
   area.style.gridTemplateRows    = `repeat(${rows}, 1fr)`;
 
   const cells = cols * rows;
-  const valFs = cells <= 2 ? '5.5rem' : cells <= 3 ? '4.5rem' : cells <= 4 ? '4rem' : cells <= 6 ? '3.2rem' : '2.6rem';
-  const hrtFs = cells <= 3 ? '1.3rem' : cells <= 4 ? '1.1rem' : '.85rem';
+  const valFs = cells<=2?'5.5rem':cells<=3?'4.5rem':cells<=4?'4rem':cells<=6?'3.2rem':'2.6rem';
+  const hrtFs = cells<=3?'1.3rem':cells<=4?'1.1rem':'.85rem';
 
-  const sorted = [...gs.players].map((p,i) => ({...p, _i:i})).sort((a,b) => b.score - a.score);
+  const sorted = [...gs.players].map((p,i)=>({...p,_i:i})).sort((a,b)=>b.score-a.score);
 
-  area.innerHTML = gs.players.map((p, i) => {
-    const rank    = sorted.findIndex(s => s._i === i);
-    const leader  = rank === 0 && mode === 'score';
+  area.innerHTML = gs.players.map((p,i) => {
+    const rank   = sorted.findIndex(s=>s._i===i);
+    const leader = rank===0 && mode==='score';
     const rotDown = isRotatedDown(i, cols, rows);
+    const bg = `background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66`;
 
     if (mode === 'lives') {
       let hearts = '';
-      for (let h = 0; h < gs.lives; h++)
-        hearts += `<span class="heart${h >= p.livesLeft ? ' lost' : ''}" style="font-size:${hrtFs}">❤️</span>`;
+      for (let h=0; h<gs.lives; h++)
+        hearts += `<span class="heart${h>=p.livesLeft?' lost':''}" style="font-size:${hrtFs}">❤️</span>`;
       return `
-        <div class="pcard${p.eliminated ? ' elim' : ''}${rotDown ? ' rot-down' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
+        <div class="pcard${p.eliminated?' elim':''}${rotDown?' rot-down':''}" id="pc${i}" style="${bg}">
           <div class="pcard-name">
-            <div class="pcard-dot" style="background:${p.color}"></div>
+            <div class="pcard-dot"></div>
             <div class="pcard-lbl">${esc(p.name)}</div>
           </div>
           <div class="pcard-tap" id="tap${i}">
-            <div class="pcard-val" style="font-size:${valFs};color:${p.color}">${p.livesLeft}</div>
+            <div class="pcard-val" style="font-size:${valFs}">${p.livesLeft}</div>
             <div class="pcard-hearts">${hearts}</div>
             <div class="pcard-delta" id="d${i}"></div>
             <div class="elim-label">ELIMINADO</div>
@@ -554,14 +874,14 @@ function renderGame() {
         </div>`;
     } else {
       return `
-        <div class="pcard${leader ? ' leader' : ''}${rotDown ? ' rot-down' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
+        <div class="pcard${leader?' leader':''}${rotDown?' rot-down':''}" id="pc${i}" style="${bg}">
           <div class="pcard-name">
-            <div class="pcard-dot" style="background:${p.color}"></div>
+            <div class="pcard-dot"></div>
             <div class="pcard-lbl">${esc(p.name)}</div>
-            <div class="pcard-rank">${rank === 0 ? '👑' : '#'+(rank+1)}</div>
+            <div class="pcard-rank">${rank===0?'👑':'#'+(rank+1)}</div>
           </div>
           <div class="pcard-tap" id="tap${i}">
-            <div class="pcard-val" style="font-size:${valFs};color:${leader ? p.color : '#fff'}">${p.score}</div>
+            <div class="pcard-val" style="font-size:${valFs};${leader?'color:'+p.color:''}">${p.score}</div>
             <div class="pcard-delta" id="d${i}"></div>
           </div>
           <div class="pcard-btns">
@@ -573,54 +893,23 @@ function renderGame() {
   }).join('');
 }
 
-/* ── ATTACH EVENTS ──
-   Called once after every renderGame().
-   innerHTML wipes old DOM so no listener accumulation. */
 function attachEvents() {
-  gs.players.forEach((p, i) => {
-    // TAP ZONE — touchend only on mobile, click only on desktop
-    const tap = document.getElementById('tap' + i);
+  gs.players.forEach((p,i) => {
+    const tap = document.getElementById('tap'+i);
     if (!tap) return;
-
-    let touchStarted = false;
-
-    tap.addEventListener('touchstart', e => {
-      e.preventDefault();
-      touchStarted = true;
-    }, { passive: false });
-
-    tap.addEventListener('touchend', e => {
-      e.preventDefault();
-      if (!touchStarted) return;
-      touchStarted = false;
-      doTap(i);
-    }, { passive: false });
-
-    tap.addEventListener('click', () => {
-      if (touchStarted) return; // already handled by touchend
-      doTap(i);
-    });
-
-    // MINUS button
-    const bm = document.getElementById('bm' + i);
+    let touched = false;
+    tap.addEventListener('touchstart', e => { e.preventDefault(); touched = true; }, { passive:false });
+    tap.addEventListener('touchend',   e => { e.preventDefault(); if(!touched) return; touched=false; doTap(i); }, { passive:false });
+    tap.addEventListener('click',      ()  => { if(touched) return; doTap(i); });
+    const bm = document.getElementById('bm'+i);
     if (bm) {
-      bm.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
-      bm.addEventListener('click', e => {
-        e.stopPropagation();
-        if (mode === 'lives') chLives(i, -1);
-        else chScore(i, -1);
-      });
+      bm.addEventListener('touchstart', e=>e.stopPropagation(), {passive:true});
+      bm.addEventListener('click', e=>{ e.stopPropagation(); mode==='lives'?chLives(i,-1):chScore(i,-1); });
     }
-
-    // PLUS button
-    const bp = document.getElementById('bp' + i);
+    const bp = document.getElementById('bp'+i);
     if (bp) {
-      bp.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
-      bp.addEventListener('click', e => {
-        e.stopPropagation();
-        if (mode === 'lives') chLives(i, +1);
-        else chScore(i, +1);
-      });
+      bp.addEventListener('touchstart', e=>e.stopPropagation(), {passive:true});
+      bp.addEventListener('click', e=>{ e.stopPropagation(); mode==='lives'?chLives(i,+1):chScore(i,+1); });
     }
   });
 }
@@ -628,163 +917,373 @@ function attachEvents() {
 function doTap(i) {
   if (tapGuard[i]) return;
   tapGuard[i] = true;
-  setTimeout(() => { tapGuard[i] = false; }, 300);
-  if (mode === 'lives') chLives(i, -1);
-  else chScore(i, +1);
+  setTimeout(()=>{ tapGuard[i]=false; }, 300);
+  mode==='lives' ? chLives(i,-1) : chScore(i,+1);
 }
 
-/* ── LIVES ── */
-function chLives(i, delta) {
+function chLives(i,delta) {
   const p = gs.players[i];
   if (p.eliminated) return;
-  hist.push({ type: 'lives', i, prev: { livesLeft: p.livesLeft, eliminated: p.eliminated } });
-  p.livesLeft = Math.max(0, Math.min(gs.lives, p.livesLeft + delta));
-  if (p.livesLeft === 0) p.eliminated = true;
-  flashPending = { i, delta };
-  renderAndBind();
-  doFlash();
-  const alive = gs.players.filter(pl => !pl.eliminated);
-  if (alive.length === 1)      setTimeout(() => triggerWinner(alive[0], 'last'), 450);
-  else if (alive.length === 0) setTimeout(() => triggerWinner(null, 'draw'),     450);
+  hist.push({type:'lives',i,prev:{livesLeft:p.livesLeft,eliminated:p.eliminated}});
+  p.livesLeft = Math.max(0,Math.min(gs.lives, p.livesLeft+delta));
+  if (p.livesLeft===0) p.eliminated=true;
+  flashPending={i,delta};
+  renderAndBind(); doFlash();
+  const alive = gs.players.filter(pl=>!pl.eliminated);
+  if (alive.length===1)      setTimeout(()=>triggerWinner(alive[0],'last'),450);
+  else if (alive.length===0) setTimeout(()=>triggerWinner(null,'draw'),450);
 }
 
-/* ── SCORE ── */
-function chScore(i, dir) {
-  const p     = gs.players[i];
-  const delta = gs.ppt * dir;
-  hist.push({ type: 'score', i, prev: { score: p.score } });
-  p.score = Math.max(0, p.score + delta);
-  flashPending = { i, delta };
-  renderAndBind();
-  doFlash();
-  if (gs.winScore && p.score >= gs.winScore) setTimeout(() => triggerWinner(p, 'score'), 300);
+function chScore(i,dir) {
+  const p=gs.players[i], delta=gs.ppt*dir;
+  hist.push({type:'score',i,prev:{score:p.score}});
+  p.score=Math.max(0,p.score+delta);
+  flashPending={i,delta};
+  renderAndBind(); doFlash();
+  if (gs.winScore && p.score>=gs.winScore) setTimeout(()=>triggerWinner(p,'score'),300);
 }
 
-/* ── DELTA FLASH (after renderGame so DOM is fresh) ── */
 function doFlash() {
   if (!flashPending) return;
-  const { i, delta } = flashPending;
-  flashPending = null;
-  const el = document.getElementById('d' + i);
+  const {i,delta}=flashPending; flashPending=null;
+  const el=document.getElementById('d'+i);
   if (!el) return;
-  el.className   = 'pcard-delta ' + (delta >= 0 ? 'pos' : 'neg');
-  el.textContent = (delta >= 0 ? '+' : '') + delta;
-  void el.offsetWidth; // force reflow to restart animation
+  el.className='pcard-delta '+(delta>=0?'pos':'neg');
+  el.textContent=(delta>=0?'+':'')+delta;
+  void el.offsetWidth;
   el.classList.add('anim');
-  setTimeout(() => { if (el) el.classList.remove('anim'); }, 700);
+  setTimeout(()=>{ if(el) el.classList.remove('anim'); },700);
 }
 
-/* ── UNDO ── */
 function undoLast() {
   if (!hist.length) { toast('Nada que deshacer'); return; }
-  const last = hist.pop();
-  const p    = gs.players[last.i];
-  if (last.type === 'lives') {
-    p.livesLeft  = last.prev.livesLeft;
-    p.eliminated = last.prev.eliminated;
-  } else {
-    p.score = last.prev.score;
-  }
-  renderAndBind(); // FIX: was missing attachEvents
+  const last=hist.pop(), p=gs.players[last.i];
+  if (last.type==='lives') { p.livesLeft=last.prev.livesLeft; p.eliminated=last.prev.eliminated; }
+  else { p.score=last.prev.score; }
+  renderAndBind();
   toast('↩️ Deshecho');
 }
 
-/* ── WINNER ── */
+/* ══════════════════════════════════════════
+   MUS SETUP & STATE
+══════════════════════════════════════════ */
+function openMusSetup() { goTo('musSetup'); }
+
+function startMus() {
+  const t1 = document.getElementById('musT1').value.trim() || 'Equipo 1';
+  const t2 = document.getElementById('musT2').value.trim() || 'Equipo 2';
+  const p1 = document.getElementById('musP1').value.trim() || 'J1';
+  const p2 = document.getElementById('musP2').value.trim() || 'J2';
+  const p3 = document.getElementById('musP3').value.trim() || 'J3';
+  const p4 = document.getElementById('musP4').value.trim() || 'J4';
+  const goal = parseInt(document.getElementById('musPiedrasGoal').value) || 40;
+
+  mus = {
+    goal,           // piedras para ganar (default 40)
+    juego: 1,       // juego actual (best of 3)
+    teams: [
+      { name:t1, players:[p1,p2], piedras:0, amarragos:0 },
+      { name:t2, players:[p3,p4], piedras:0, amarragos:0 }
+    ],
+    history: []     // for undo
+  };
+
+  document.getElementById('wPrimary').className = 'w-btn primary mus';
+  renderMusGame();
+  goTo('musGame');
+  tryFullscreen();
+}
+
+/* ══════════════════════════════════════════
+   MUS RENDER
+══════════════════════════════════════════ */
+function totalPiedras(team) {
+  return team.amarragos * 5 + team.piedras;
+}
+
+function renderMusGame() {
+  document.getElementById('musJuegoBadge').textContent = `Juego ${mus.juego}`;
+  const container = document.getElementById('musTeams');
+  const maxPts = mus.goal;
+  const amarragosMax = Math.floor(maxPts / 5);
+
+  container.innerHTML = mus.teams.map((team, ti) => {
+    const total = totalPiedras(team);
+    const pct   = Math.min(100, Math.round((total / maxPts) * 100));
+    const isWinning = total > totalPiedras(mus.teams[1-ti]);
+
+    // Amarragos display (up to 8 max visually)
+    let amarragosHtml = '';
+    for (let a = 0; a < Math.min(amarragosMax, 8); a++) {
+      amarragosHtml += `<div class="mus-amarrago${a >= team.amarragos ? ' empty' : ''}">🪙</div>`;
+    }
+
+    // Piedras display (0-4)
+    let piedrasHtml = '';
+    for (let p = 0; p < 5; p++) {
+      piedrasHtml += `<div class="mus-piedra${p >= team.piedras ? ' empty' : ''}"></div>`;
+    }
+
+    return `
+      <div class="mus-team${isWinning?' winning':''}" id="musteam${ti}">
+        <div class="mus-progress"><div class="mus-progress-fill" style="width:${pct}%"></div></div>
+        <div class="mus-team-header">
+          <div>
+            <div class="mus-team-name">${esc(team.name)}</div>
+            <div class="mus-team-players">${esc(team.players[0])} · ${esc(team.players[1])}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Bebas Neue',cursive;font-size:1.6rem;color:#e8c97a;line-height:1">${total}</div>
+            <div style="font-size:.6rem;color:#5a3a10;letter-spacing:1px">${team.amarragos} amar. + ${team.piedras} pied.</div>
+          </div>
+        </div>
+        <div class="mus-score-display">
+          <div class="mus-amarragos">${amarragosHtml}</div>
+          <div class="mus-piedras-row">${piedrasHtml}</div>
+          <div class="mus-total-text">${total} / ${maxPts} piedras</div>
+        </div>
+        <div class="mus-quick-btns">
+          <button class="mus-qbtn minus" onclick="musQuick(${ti},-1)">− piedra</button>
+          <button class="mus-qbtn plus"  onclick="musQuick(${ti},+1)">+ piedra</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function musQuick(ti, delta) {
+  const team = mus.teams[ti];
+  mus.history.push({ ti, snapshot: { piedras: team.piedras, amarragos: team.amarragos } });
+  addMusPiedras(ti, delta);
+}
+
+function addMusPiedras(ti, n) {
+  const team = mus.teams[ti];
+  let total = totalPiedras(team) + n;
+  if (total < 0) total = 0;
+  team.amarragos = Math.floor(total / 5);
+  team.piedras   = total % 5;
+  renderMusGame();
+  // check win
+  if (totalPiedras(team) >= mus.goal) {
+    setTimeout(() => triggerMusWinner(ti), 400);
+  }
+}
+
+function musUndo() {
+  if (!mus.history?.length) { toast('Nada que deshacer'); return; }
+  const last = mus.history.pop();
+  mus.teams[last.ti].piedras   = last.snapshot.piedras;
+  mus.teams[last.ti].amarragos = last.snapshot.amarragos;
+  renderMusGame();
+  toast('↩️ Deshecho');
+}
+
+/* ══════════════════════════════════════════
+   MUS RONDA MODAL
+══════════════════════════════════════════ */
+// State for the modal
+let rondaState = {};
+
+function openRondaModal() {
+  // Init rondaState
+  rondaState = {};
+  LANCES.forEach(l => {
+    rondaState[l.key] = { winner: null, pts: l.defaultPts, active: true };
+  });
+
+  buildLanceRows();
+  document.getElementById('rondaModal').classList.add('show');
+}
+
+function buildLanceRows() {
+  const t0 = esc(mus.teams[0].name);
+  const t1 = esc(mus.teams[1].name);
+
+  document.getElementById('lanceRows').innerHTML = LANCES.map(l => {
+    const rs = rondaState[l.key];
+    return `
+      <div class="lance-row" id="lrow_${l.key}">
+        <div class="lance-icon">${l.icon}</div>
+        <div class="lance-name">${l.name}</div>
+        <div class="lance-winner">
+          <div class="team-chip t0${rs.winner===0?' selected':''}" onclick="setLanceWinner('${l.key}',0)">${t0}</div>
+          <div class="team-chip t1${rs.winner===1?' selected':''}" onclick="setLanceWinner('${l.key}',1)">${t1}</div>
+          ${l.hasPares ? `<div class="team-chip${rs.winner===-1?' selected':''}" style="font-size:.7rem" onclick="setLanceWinner('${l.key}',-1)">Nadie</div>` : ''}
+        </div>
+        <div class="lance-pts">
+          <button class="lance-pts-btn" onclick="changeLancePts('${l.key}',-1)">−</button>
+          <div class="lance-pts-val" id="lpts_${l.key}">${rs.pts}</div>
+          <button class="lance-pts-btn" onclick="changeLancePts('${l.key}',+1)">+</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function setLanceWinner(key, team) {
+  rondaState[key].winner = team;
+  buildLanceRows();
+}
+
+function changeLancePts(key, delta) {
+  rondaState[key].pts = Math.max(1, (rondaState[key].pts || 1) + delta);
+  const el = document.getElementById('lpts_'+key);
+  if (el) el.textContent = rondaState[key].pts;
+}
+
+function applyRonda() {
+  // Save undo snapshot
+  mus.history.push({
+    ti: -1, // ronda-level undo
+    snapshot: mus.teams.map(t => ({ piedras: t.piedras, amarragos: t.amarragos }))
+  });
+
+  let pts = [0, 0];
+
+  LANCES.forEach(l => {
+    const rs = rondaState[l.key];
+    if (rs.winner === null || rs.winner === -1) return; // no ganador / nadie
+    pts[rs.winner] += rs.pts;
+  });
+
+  // Apply
+  [0,1].forEach(ti => {
+    if (pts[ti] > 0) addMusPiedraSilent(ti, pts[ti]);
+  });
+
+  renderMusGame();
+  document.getElementById('rondaModal').classList.remove('show');
+  toast(`✅ Equipo 1: +${pts[0]} · Equipo 2: +${pts[1]}`);
+
+  // Check win after applying
+  mus.teams.forEach((t,ti) => {
+    if (totalPiedras(t) >= mus.goal) {
+      setTimeout(() => triggerMusWinner(ti), 500);
+    }
+  });
+}
+
+function addMusPiedraSilent(ti, n) {
+  const team = mus.teams[ti];
+  let total = totalPiedras(team) + n;
+  team.amarragos = Math.floor(total / 5);
+  team.piedras   = total % 5;
+}
+
+// Close modal on backdrop tap
+document.getElementById('rondaModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('rondaModal'))
+    document.getElementById('rondaModal').classList.remove('show');
+});
+
+/* ══════════════════════════════════════════
+   MUS WINNER
+══════════════════════════════════════════ */
+function triggerMusWinner(ti) {
+  const winner = mus.teams[ti];
+  const loser  = mus.teams[1-ti];
+  document.getElementById('wName').textContent = winner.name.toUpperCase();
+  document.getElementById('wSub').textContent  =
+    `${totalPiedras(winner)} piedras · ${esc(winner.players[0])} y ${esc(winner.players[1])} ganan el Juego ${mus.juego}`;
+  document.getElementById('winnerOv').classList.add('show');
+}
+
+function showMusWinner() {
+  const t = mus.teams;
+  const p0 = totalPiedras(t[0]), p1 = totalPiedras(t[1]);
+  const ti = p0 >= p1 ? 0 : 1;
+  document.getElementById('wName').textContent = t[ti].name.toUpperCase();
+  document.getElementById('wSub').textContent  = `Va ganando con ${totalPiedras(t[ti])} piedras`;
+  document.getElementById('winnerOv').classList.add('show');
+}
+
+/* ══════════════════════════════════════════
+   GENERIC WINNER
+══════════════════════════════════════════ */
 function triggerWinner(player, reason) {
   document.getElementById('wName').textContent =
     player ? player.name.toUpperCase() : '¡EMPATE!';
   document.getElementById('wSub').textContent =
     !player          ? 'Todos eliminados' :
-    reason === 'last'? '¡Último superviviente!' :
+    reason==='last'  ? '¡Último superviviente!' :
                        `${player.score} pts · ¡${player.name} gana!`;
   document.getElementById('winnerOv').classList.add('show');
 }
 
 function showWinner() {
   const players = gs.players;
-  if (mode === 'lives') {
-    const alive = players.filter(p => !p.eliminated);
+  if (mode==='lives') {
+    const alive = players.filter(p=>!p.eliminated);
     const pool  = alive.length ? alive : players;
-    const best  = [...pool].sort((a,b) => b.livesLeft - a.livesLeft)[0];
+    const best  = [...pool].sort((a,b)=>b.livesLeft-a.livesLeft)[0];
     document.getElementById('wName').textContent = best.name.toUpperCase();
     document.getElementById('wSub').textContent  =
-      alive.length > 1  ? `Va ganando · ${best.livesLeft} vida${best.livesLeft !== 1 ? 's' : ''}` :
-      alive.length === 1? '¡Último superviviente!' : '¡Empate!';
+      alive.length>1  ? `Va ganando · ${best.livesLeft} vida${best.livesLeft!==1?'s':''}` :
+      alive.length===1? '¡Último superviviente!' : '¡Empate!';
   } else {
-    const best = [...players].sort((a,b) => b.score - a.score)[0];
+    const best=[...players].sort((a,b)=>b.score-a.score)[0];
     document.getElementById('wName').textContent = best.name.toUpperCase();
     document.getElementById('wSub').textContent  = `Va ganando con ${best.score} puntos`;
   }
   document.getElementById('winnerOv').classList.add('show');
 }
 
-function closeWinner() { document.getElementById('winnerOv').classList.remove('show'); }
+function closeWinner()  { document.getElementById('winnerOv').classList.remove('show'); }
 
 function resetToHome() {
   closeWinner();
-  pending = []; gs = {}; hist = []; flashPending = null;
+  pending=[]; gs={}; hist=[]; flashPending=null; mus={};
   goTo('home');
 }
 
-function confirmBack() {
+function confirmBack(screen) {
   if (confirm('¿Salir de la partida?')) resetToHome();
 }
 
-/* ── FULLSCREEN ──
-   Android/Chrome: requestFullscreen works fine.
-   iOS Safari: fullscreen API blocked. We simulate it by scrolling
-   the address bar away, and show a one-time banner to add to homescreen. */
+/* ══════════════════════════════════════════
+   FULLSCREEN
+══════════════════════════════════════════ */
 function tryFullscreen() {
   try {
     const el = document.documentElement;
     if (document.fullscreenElement || document.webkitFullscreenElement) return;
-    if (el.requestFullscreen) { el.requestFullscreen(); return; }
-    if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); return; }
+    if (el.requestFullscreen)        { el.requestFullscreen(); return; }
+    if (el.webkitRequestFullscreen)  { el.webkitRequestFullscreen(); return; }
   } catch(e) {}
-  // iOS fallback: scroll address bar away
-  setTimeout(() => window.scrollTo(0, 1), 100);
-  // Show homescreen tip once
+  // iOS fallback
+  setTimeout(() => window.scrollTo(0,1), 150);
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.navigator.standalone;
-  if (isIOS && !isStandalone && !localStorage.getItem('hs_tip_shown')) {
-    localStorage.setItem('hs_tip_shown', '1');
-    showHsTip();
+  if (isIOS && !window.navigator.standalone && !sessionStorage.getItem('hs_tip')) {
+    sessionStorage.setItem('hs_tip','1');
+    showIosTip();
   }
 }
 
-function showHsTip() {
-  const tip = document.createElement('div');
-  tip.style.cssText = `
-    position:fixed;bottom:0;left:0;right:0;z-index:9999;
-    background:#1a1a1a;border-top:1px solid #333;
-    padding:1rem 1.2rem 2rem;font-family:Barlow,sans-serif;
-    display:flex;flex-direction:column;gap:.5rem;
-    animation:slideUp .3s ease;
-  `;
-  tip.innerHTML = `
-    <div style="font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#666">Para pantalla completa en iPhone</div>
-    <div style="font-size:.9rem;color:#aaa">Pulsa <strong style="color:#fff">Compartir</strong> → <strong style="color:#fff">Añadir a pantalla de inicio</strong> 📲</div>
-    <button onclick="this.parentElement.remove()" style="margin-top:.3rem;background:#333;border:none;border-radius:10px;color:#fff;padding:.6rem;font-size:.85rem;cursor:pointer">Entendido</button>
-  `;
-  document.body.appendChild(tip);
+function showIosTip() {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;bottom:0;left:0;right:0;z-index:9999;
+    background:#1a1a1a;border-top:1px solid #333;padding:1rem 1.2rem 2.5rem;
+    font-family:Barlow,sans-serif;display:flex;flex-direction:column;gap:.4rem;`;
+  el.innerHTML = `
+    <div style="font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#555">Pantalla completa en iPhone</div>
+    <div style="font-size:.88rem;color:#999">Pulsa <strong style="color:#fff">Compartir ⬆️</strong> → <strong style="color:#fff">Añadir a inicio</strong> para abrir sin barras</div>
+    <button onclick="this.parentElement.remove()" style="margin-top:.3rem;background:#222;border:none;border-radius:10px;color:#888;padding:.6rem;font-size:.85rem;cursor:pointer;">Entendido</button>`;
+  document.body.appendChild(el);
 }
 
-window.addEventListener('orientationchange', () => setTimeout(tryFullscreen, 400));
-window.screen?.orientation?.addEventListener('change', () => setTimeout(tryFullscreen, 400));
+window.addEventListener('orientationchange', () => setTimeout(tryFullscreen, 350));
+window.screen?.orientation?.addEventListener('change', () => setTimeout(tryFullscreen, 350));
 
-/* ── UTILS ── */
+/* ══════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════ */
 function toast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2200);
+  t._t = setTimeout(()=>t.classList.remove('show'), 2500);
 }
-
 function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>
