@@ -184,25 +184,26 @@ html, body {
   border-radius: 14px;
   display: flex; flex-direction: column;
   overflow: hidden; position: relative;
-  border: 1px solid #1a1a1a; background: #0d0d0d;
+  border: 2px solid transparent;
   min-width: 0; min-height: 0;
-  transition: border-color .25s, box-shadow .25s, opacity .3s, filter .3s;
+  transition: opacity .3s, filter .3s;
 }
-.pcard.leader  { border-color: rgba(255,220,50,.25); box-shadow: 0 0 16px rgba(255,200,0,.07); }
-.pcard.elim    { opacity: .3; filter: grayscale(1); }
+.pcard.leader  { box-shadow: 0 0 24px rgba(255,220,50,.3); }
+.pcard.elim    { opacity: .25; filter: grayscale(1); }
 .pcard.flipped { transform: rotate(180deg); }
 
 .pcard-name {
   padding: .25rem .6rem;
   display: flex; align-items: center; gap: .4rem;
   flex-shrink: 0; height: 26px;
+  background: rgba(0,0,0,.25);
 }
-.pcard-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.pcard-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: rgba(255,255,255,.6); }
 .pcard-lbl {
   font-size: .62rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; color: #666;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; color: rgba(255,255,255,.85);
 }
-.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .78rem; color: #2a2a2a; flex-shrink: 0; }
+.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .78rem; color: rgba(255,255,255,.5); flex-shrink: 0; }
 
 .pcard-tap {
   flex: 1; display: flex; flex-direction: column;
@@ -216,6 +217,8 @@ html, body {
   font-family: 'Bebas Neue', cursive;
   line-height: 1; text-align: center; pointer-events: none;
   transition: transform .1s;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,.4);
 }
 .pcard-tap:active .pcard-val { transform: scale(.88); }
 
@@ -243,25 +246,27 @@ html, body {
 .elim-label {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 3px; color: #ff4060;
+  font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 3px;
+  color: #fff; background: rgba(0,0,0,.55);
   opacity: 0; pointer-events: none; transition: opacity .3s;
 }
 .pcard.elim .elim-label { opacity: 1; }
 
 .pcard-btns {
   display: flex; flex-shrink: 0;
-  border-top: 1px solid #111; height: 36px;
+  border-top: 1px solid rgba(0,0,0,.2); height: 36px;
+  background: rgba(0,0,0,.2);
 }
 .pcard-btn {
   flex: 1; border: none; background: transparent;
-  color: #2a2a2a; cursor: pointer;
+  color: rgba(255,255,255,.45); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', cursive; font-size: .82rem; letter-spacing: 1px;
+  font-family: 'Bebas Neue', cursive; font-size: .85rem; letter-spacing: 1px;
   transition: background .1s, color .1s;
 }
-.pcard-btn + .pcard-btn { border-left: 1px solid #111; }
-.pcard-btn.minus:active { background: rgba(255,64,96,.18); color: #ff4060; }
-.pcard-btn.plus:active  { background: rgba(64,208,144,.14); color: #40d090; }
+.pcard-btn + .pcard-btn { border-left: 1px solid rgba(0,0,0,.2); }
+.pcard-btn.minus:active { background: rgba(0,0,0,.3); color: #fff; }
+.pcard-btn.plus:active  { background: rgba(255,255,255,.15); color: #fff; }
 
 /* WINNER */
 .winner-ov {
@@ -537,7 +542,7 @@ function renderGame() {
       for (let h = 0; h < gs.lives; h++)
         hearts += `<span class="heart${h >= p.livesLeft ? ' lost' : ''}" style="font-size:${hrtFs}">❤️</span>`;
       return `
-        <div class="pcard${p.eliminated ? ' elim' : ''}${flipped ? ' flipped' : ''}" id="pc${i}">
+        <div class="pcard${p.eliminated ? ' elim' : ''}${flipped ? ' flipped' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
           <div class="pcard-name">
             <div class="pcard-dot" style="background:${p.color}"></div>
             <div class="pcard-lbl">${esc(p.name)}</div>
@@ -555,7 +560,7 @@ function renderGame() {
         </div>`;
     } else {
       return `
-        <div class="pcard${leader ? ' leader' : ''}${flipped ? ' flipped' : ''}" id="pc${i}">
+        <div class="pcard${leader ? ' leader' : ''}${flipped ? ' flipped' : ''}" id="pc${i}" style="background:linear-gradient(160deg,${p.color}cc,${p.color}88);border-color:${p.color}66">
           <div class="pcard-name">
             <div class="pcard-dot" style="background:${p.color}"></div>
             <div class="pcard-lbl">${esc(p.name)}</div>
@@ -730,6 +735,18 @@ function resetToHome() {
 function confirmBack() {
   if (confirm('¿Salir de la partida?')) resetToHome();
 }
+
+/* ── FULLSCREEN on rotate ── */
+function tryFullscreen() {
+  try {
+    const el = document.documentElement;
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  } catch(e) {}
+}
+window.addEventListener('orientationchange', () => setTimeout(tryFullscreen, 300));
+window.screen?.orientation?.addEventListener('change', () => setTimeout(tryFullscreen, 300));
 
 /* ── UTILS ── */
 function toast(msg) {
