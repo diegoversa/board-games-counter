@@ -141,23 +141,13 @@ html, body {
 /* ── GAME ── */
 #game { background: #080808; overflow: hidden; }
 
-.portrait-hint {
-  position: absolute; inset: 0; z-index: 90;
-  background: #080808;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1rem;
-}
-.portrait-hint .rotate-icon { font-size: 3.5rem; animation: rotHint 1.6s ease-in-out infinite; }
-@keyframes rotHint { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-90deg)} }
-.portrait-hint p { color: #555; font-size: .85rem; letter-spacing: 2px; text-transform: uppercase; }
-.portrait-hint.gone { display: none; }
+.portrait-hint { display: none; }
 
 .game-layout {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
-  opacity: 0; pointer-events: none; transition: opacity .35s;
+  opacity: 1; pointer-events: all;
 }
-.game-layout.visible { opacity: 1; pointer-events: all; }
 
 .game-bar {
   display: flex; align-items: center;
@@ -182,18 +172,21 @@ html, body {
 .bar-btn:active { background: #1a1a1a; color: #777; }
 
 .players-area {
-  flex: 1; display: flex;
+  flex: 1;
+  display: grid;
   padding: .35rem; gap: .35rem;
-  overflow: hidden; align-items: stretch;
+  overflow: hidden;
 }
+/* grid columns set dynamically by JS via style attribute */
 
 /* ── PLAYER CARD ── */
 .pcard {
-  flex: 1; border-radius: 14px;
+  border-radius: 14px;
   display: flex; flex-direction: column;
   overflow: hidden; position: relative;
   border: 1px solid #1a1a1a; background: #0d0d0d;
-  min-width: 0; transition: border-color .25s, box-shadow .25s, opacity .3s, filter .3s;
+  min-width: 0; min-height: 0;
+  transition: border-color .25s, box-shadow .25s, opacity .3s, filter .3s;
 }
 .pcard.leader { border-color: rgba(255,220,50,.2); box-shadow: 0 0 16px rgba(255,200,0,.06); }
 .pcard.elim   { opacity: .3; filter: grayscale(1); }
@@ -367,7 +360,7 @@ html, body {
       </div>
     </div>
 
-    <button class="start-btn lives" id="startBtnEl" onclick="startGame()">▶ GIRA EL MÓVIL Y EMPIEZA</button>
+    <button class="start-btn lives" id="startBtnEl" onclick="startGame()">▶ EMPEZAR PARTIDA</button>
   </div>
 </div>
 
@@ -488,15 +481,34 @@ function startGame() {
   renderGame();
   attachEvents();
   goTo('game');
-  checkOrientation();
+  // request fullscreen
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
 }
 
 /* ── RENDER ── */
+function gridCols(count) {
+  if (count <= 2) return 2;
+  if (count <= 4) return 2;
+  if (count <= 6) return 3;
+  return 4;
+}
+
 function renderGame() {
   const area  = document.getElementById('playersArea');
   const count = gs.players.length;
-  const valFs = count<=2?'5.5rem':count<=3?'4.5rem':count<=4?'3.8rem':count<=6?'3rem':'2.4rem';
-  const hrtFs = count<=3?'1.3rem':count<=5?'1rem':'.8rem';
+  const cols  = gridCols(count);
+  const rows  = Math.ceil(count / cols);
+
+  area.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  area.style.gridTemplateRows    = `repeat(${rows}, 1fr)`;
+
+  // font size based on grid cell size (smaller cells = smaller font)
+  const cells = cols * rows;
+  const valFs = cells<=2?'5.5rem':cells<=4?'4rem':cells<=6?'3.2rem':'2.6rem';
+  const hrtFs = cells<=2?'1.4rem':cells<=4?'1.1rem':'.85rem';
+
   const sorted = [...gs.players].map((p,i)=>({...p,_i:i})).sort((a,b)=>b.score-a.score);
 
   area.innerHTML = gs.players.map((p,i) => {
@@ -677,16 +689,6 @@ function closeWinner()  { document.getElementById('winnerOv').classList.remove('
 function resetToHome()  { closeWinner(); pending=[]; gs={}; hist=[]; goTo('home'); }
 function confirmBack()  { if(confirm('¿Salir de la partida?')) resetToHome(); }
 
-/* ── ORIENTATION ── */
-function checkOrientation() {
-  if (!document.getElementById('game').classList.contains('active')) return;
-  const ls = window.innerWidth > window.innerHeight;
-  document.getElementById('portraitHint').classList.toggle('gone', ls);
-  document.getElementById('gameLayout').classList.toggle('visible', ls);
-}
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', ()=>setTimeout(checkOrientation, 250));
-
 /* ── UTILS ── */
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -698,8 +700,7 @@ function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// orientation ready
-checkOrientation();
+
 </script>
 </body>
 </html>
