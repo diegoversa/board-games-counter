@@ -45,16 +45,14 @@ html, body {
   align-items: center; justify-content: center;
   padding: 2rem 1.5rem 3rem;
 }
-.home-emoji { font-size: 3.5rem; margin-bottom: .4rem; animation: bob 2.5s ease-in-out infinite; }
-@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-.home-title {
-  font-family: 'Bebas Neue', cursive;
-  font-size: 3rem; letter-spacing: 8px;
-  background: linear-gradient(135deg,#fff 0%,#555 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  margin-bottom: .2rem;
+.home-logo {
+  width: 220px; height: auto;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 4px 24px rgba(255,64,96,.15));
+  animation: bob 3s ease-in-out infinite;
 }
-.home-sub { color: #333; font-size: .75rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 3rem; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.home-sub { color: #333; font-size: .75rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2.2rem; }
 .mode-cards { display: flex; flex-direction: column; gap: .9rem; width: 100%; max-width: 340px; }
 .mode-card {
   border-radius: 20px; padding: 1.3rem 1.5rem;
@@ -544,8 +542,35 @@ html, body {
 
 <!-- HOME -->
 <div class="screen active" id="home">
-  <div class="home-emoji">🎲</div>
-  <div class="home-title">TRACKER</div>
+  <svg class="home-logo" viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- Dice body -->
+    <rect x="4" y="4" width="54" height="54" rx="12" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+    <!-- Dice dots: 5 pattern -->
+    <circle cx="18" cy="18" r="5" fill="#ff4060"/>
+    <circle cx="43" cy="18" r="5" fill="#ff4060"/>
+    <circle cx="30.5" cy="31" r="5" fill="#e8c97a"/>
+    <circle cx="18" cy="44" r="5" fill="#40d090"/>
+    <circle cx="43" cy="44" r="5" fill="#40d090"/>
+    <!-- Top shine -->
+    <rect x="8" y="8" width="46" height="10" rx="6" fill="white" fill-opacity="0.04"/>
+    <!-- Text: GAME -->
+    <text x="68" y="34" font-family="'Bebas Neue',cursive" font-size="28" letter-spacing="4" fill="url(#gtxt)">GAME</text>
+    <!-- Text: TRACKER -->
+    <text x="68" y="56" font-family="'Bebas Neue',cursive" font-size="18" letter-spacing="5" fill="#333">TRACKER</text>
+    <!-- Underline accent -->
+    <rect x="68" y="62" width="85" height="2" rx="1" fill="url(#gline)"/>
+    <defs>
+      <linearGradient id="gtxt" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#fff"/>
+        <stop offset="100%" stop-color="#666"/>
+      </linearGradient>
+      <linearGradient id="gline" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ff4060"/>
+        <stop offset="50%" stop-color="#e8c97a"/>
+        <stop offset="100%" stop-color="#40d090"/>
+      </linearGradient>
+    </defs>
+  </svg>
   <div class="home-sub">Elige el modo</div>
   <div class="mode-cards">
     <div class="mode-card lives" onclick="openSetup('lives')">
