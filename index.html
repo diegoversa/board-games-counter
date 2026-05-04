@@ -824,7 +824,7 @@ function gridLayout(count) {
    "outward" means away from center of table */
 function isRotatedDown(idx, cols, rows) {
   const row = Math.floor(idx / cols);
-  return row >= Math.ceil(rows / 2);
+  return row < Math.ceil(rows / 2);
 }
 
 /* ══════════════════════════════════════════
