@@ -24,7 +24,7 @@ html, body {
   overscroll-behavior: none;
 }
 
-/* ── SCREENS ── */
+/* SCREENS */
 .screen {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
@@ -35,7 +35,7 @@ html, body {
 }
 .screen.active { opacity: 1; pointer-events: all; }
 
-/* ── HOME ── */
+/* HOME */
 #home {
   background: #0a0a0a;
   align-items: center; justify-content: center;
@@ -68,7 +68,7 @@ html, body {
 .mode-card.score .mode-text h3 { color: #40d090; }
 .mode-arrow { margin-left: auto; color: #333; font-size: 1.1rem; }
 
-/* ── SETUP ── */
+/* SETUP */
 #setup { background: #0a0a0a; }
 .setup-topbar {
   padding: 3rem 1.2rem .8rem;
@@ -138,15 +138,13 @@ html, body {
 .start-btn.score { background: linear-gradient(135deg,#40d090,#008a50); color: #000; }
 .hidden { display: none !important; }
 
-/* ── GAME ── */
-#game { background: #080808; overflow: hidden; }
+/* GAME — overflow:hidden on the screen itself */
+#game { overflow: hidden; background: #080808; }
 
-.portrait-hint { display: none; }
-
+/* game layout always visible — screen opacity handles show/hide */
 .game-layout {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
-  opacity: 1; pointer-events: all;
 }
 
 .game-bar {
@@ -171,15 +169,17 @@ html, body {
 }
 .bar-btn:active { background: #1a1a1a; color: #777; }
 
+/* GRID AREA */
 .players-area {
   flex: 1;
   display: grid;
-  padding: .35rem; gap: .35rem;
+  padding: .35rem;
+  gap: .35rem;
   overflow: hidden;
+  /* columns/rows set by JS */
 }
-/* grid columns set dynamically by JS via style attribute */
 
-/* ── PLAYER CARD ── */
+/* PLAYER CARD */
 .pcard {
   border-radius: 14px;
   display: flex; flex-direction: column;
@@ -188,20 +188,21 @@ html, body {
   min-width: 0; min-height: 0;
   transition: border-color .25s, box-shadow .25s, opacity .3s, filter .3s;
 }
-.pcard.leader { border-color: rgba(255,220,50,.2); box-shadow: 0 0 16px rgba(255,200,0,.06); }
-.pcard.elim   { opacity: .3; filter: grayscale(1); }
+.pcard.leader  { border-color: rgba(255,220,50,.25); box-shadow: 0 0 16px rgba(255,200,0,.07); }
+.pcard.elim    { opacity: .3; filter: grayscale(1); }
+.pcard.flipped { transform: rotate(180deg); }
 
 .pcard-name {
-  padding: .3rem .6rem;
+  padding: .25rem .6rem;
   display: flex; align-items: center; gap: .4rem;
-  flex-shrink: 0; height: 28px;
+  flex-shrink: 0; height: 26px;
 }
-.pcard-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.pcard-lbl  {
-  font-size: .65rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+.pcard-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.pcard-lbl {
+  font-size: .62rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; color: #666;
 }
-.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .8rem; color: #2a2a2a; flex-shrink: 0; }
+.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .78rem; color: #2a2a2a; flex-shrink: 0; }
 
 .pcard-tap {
   flex: 1; display: flex; flex-direction: column;
@@ -220,13 +221,13 @@ html, body {
 
 .pcard-hearts {
   display: flex; flex-wrap: wrap; justify-content: center;
-  gap: 2px; padding: 3px .4rem 0; pointer-events: none;
+  gap: 2px; padding: 3px .3rem 0; pointer-events: none;
 }
 .heart { line-height: 1; transition: opacity .2s, transform .2s; display: inline-block; }
 .heart.lost { opacity: .1; transform: scale(.7); filter: grayscale(1); }
 
 .pcard-delta {
-  position: absolute; top: 15%; left: 50%;
+  position: absolute; top: 12%; left: 50%;
   transform: translateX(-50%);
   font-family: 'Bebas Neue', cursive; font-size: 2rem;
   pointer-events: none; opacity: 0;
@@ -236,33 +237,33 @@ html, body {
 .pcard-delta.anim { animation: dFloat .65s ease-out forwards; }
 @keyframes dFloat {
   0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-36px); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-34px); }
 }
 
 .elim-label {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: 3px; color: #ff4060;
+  font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 3px; color: #ff4060;
   opacity: 0; pointer-events: none; transition: opacity .3s;
 }
 .pcard.elim .elim-label { opacity: 1; }
 
 .pcard-btns {
   display: flex; flex-shrink: 0;
-  border-top: 1px solid #111; height: 38px;
+  border-top: 1px solid #111; height: 36px;
 }
 .pcard-btn {
   flex: 1; border: none; background: transparent;
   color: #2a2a2a; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', cursive; font-size: .85rem; letter-spacing: 1px;
+  font-family: 'Bebas Neue', cursive; font-size: .82rem; letter-spacing: 1px;
   transition: background .1s, color .1s;
 }
 .pcard-btn + .pcard-btn { border-left: 1px solid #111; }
 .pcard-btn.minus:active { background: rgba(255,64,96,.18); color: #ff4060; }
 .pcard-btn.plus:active  { background: rgba(64,208,144,.14); color: #40d090; }
 
-/* ── WINNER ── */
+/* WINNER */
 .winner-ov {
   position: fixed; inset: 0; z-index: 999;
   background: rgba(0,0,0,.93);
@@ -291,7 +292,7 @@ html, body {
 .w-btn.primary.score { background: linear-gradient(135deg,#40d090,#008a50); color:#000; }
 .w-btn.sec { background: #0d0d0d; color: #3a3a3a; border: 1px solid #1e1e1e; }
 
-/* ── TOAST ── */
+/* TOAST */
 .toast {
   position: fixed; bottom: 4.5rem; left: 50%;
   transform: translateX(-50%) translateY(10px);
@@ -337,12 +338,10 @@ html, body {
     <div class="setup-mode-title lives" id="setupTitle">❤️ VIDAS</div>
   </div>
   <div class="setup-body">
-
     <div id="livesConf">
       <div class="field-label">Vidas iniciales por jugador</div>
       <input class="field-input" id="livesCount" type="number" value="3" min="1" max="20" inputmode="numeric"/>
     </div>
-
     <div id="scoreConf" class="hidden">
       <div class="field-label">Puntos que suma cada tap</div>
       <input class="field-input" id="pointsPerTap" type="number" value="1" min="1" max="1000" inputmode="numeric"/>
@@ -350,7 +349,6 @@ html, body {
       <div class="field-label">Meta de puntos para ganar (opcional)</div>
       <input class="field-input" id="winScore" type="number" placeholder="Vacío = sin límite" min="1" inputmode="numeric"/>
     </div>
-
     <div>
       <div class="field-label">Jugadores <span id="playerCount" style="color:#2a2a2a">(0/8)</span></div>
       <div class="add-player-area" id="playerChips"></div>
@@ -359,18 +357,13 @@ html, body {
         <button class="add-btn lives" id="addBtnEl" onclick="addPlayer()">+</button>
       </div>
     </div>
-
     <button class="start-btn lives" id="startBtnEl" onclick="startGame()">▶ EMPEZAR PARTIDA</button>
   </div>
 </div>
 
 <!-- GAME -->
 <div class="screen" id="game">
-  <div class="portrait-hint" id="portraitHint">
-    <div class="rotate-icon">📱</div>
-    <p>Gira el móvil en horizontal</p>
-  </div>
-  <div class="game-layout" id="gameLayout">
+  <div class="game-layout">
     <div class="game-bar">
       <div class="game-bar-title">TRACKER</div>
       <div class="game-mode-pill lives" id="modePill">VIDAS</div>
@@ -399,13 +392,15 @@ html, body {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── STATE ── */
 const COLORS = ['#ff4060','#40d090','#4a9eff','#ffb830','#c060ff','#ff6b30','#00d4cc','#ff80b0'];
-let mode = 'lives';
-let gs   = {};
-let hist = [];
+let mode    = 'lives';
+let gs      = {};
+let hist    = [];
 let pending = [];
-let tapGuard = {};
+let flashPending = null;
+
+// tapGuard: per-player cooldown to prevent double-fire
+const tapGuard = {};
 
 /* ── NAV ── */
 function goTo(id) {
@@ -466,183 +461,218 @@ function startGame() {
   gs = {
     mode, lives, ppt, winScore: winSc,
     players: pending.map((name,i) => ({
-      name, color: COLORS[i%COLORS.length],
+      name, color: COLORS[i % COLORS.length],
       livesLeft: lives, eliminated: false,
       score: 0
     }))
   };
   hist = [];
+  flashPending = null;
 
   const pill = document.getElementById('modePill');
   pill.textContent = mode === 'lives' ? 'VIDAS' : 'PUNTOS';
   pill.className   = 'game-mode-pill ' + mode;
   document.getElementById('wPrimary').className = 'w-btn primary ' + mode;
 
-  renderGame();
-  attachEvents();
   goTo('game');
+  renderAndBind();
+
   // request fullscreen
-  const el = document.documentElement;
-  if (el.requestFullscreen) el.requestFullscreen();
-  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  try {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  } catch(e) {}
 }
 
-/* ── RENDER ── */
-function gridCols(count) {
-  if (count <= 2) return 2;
-  if (count <= 4) return 2;
-  if (count <= 6) return 3;
-  return 4;
+/* ── GRID LAYOUT HELPER ── */
+function gridLayout(count) {
+  if (count === 1) return { cols: 1, rows: 1 };
+  if (count === 2) return { cols: 2, rows: 1 };
+  if (count === 3) return { cols: 3, rows: 1 };
+  if (count === 4) return { cols: 2, rows: 2 };
+  if (count === 5) return { cols: 3, rows: 2 };
+  if (count === 6) return { cols: 3, rows: 2 };
+  if (count === 7) return { cols: 4, rows: 2 };
+  if (count === 8) return { cols: 4, rows: 2 };
+  return { cols: 4, rows: Math.ceil(count/4) };
+}
+
+/* ── FLIP HELPER ──
+   Right half of the grid is rotated 180° so those players
+   can read their card from the opposite side of the table.
+   "Right half" = column index >= cols/2  */
+function isFlipped(playerIndex, cols) {
+  const col = playerIndex % cols; // 0-based column
+  return col >= Math.ceil(cols / 2);
+}
+
+/* ── RENDER + BIND (always together) ── */
+function renderAndBind() {
+  renderGame();
+  attachEvents();
 }
 
 function renderGame() {
   const area  = document.getElementById('playersArea');
   const count = gs.players.length;
-  const cols  = gridCols(count);
-  const rows  = Math.ceil(count / cols);
+  const { cols, rows } = gridLayout(count);
 
   area.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   area.style.gridTemplateRows    = `repeat(${rows}, 1fr)`;
 
-  // font size based on grid cell size (smaller cells = smaller font)
   const cells = cols * rows;
-  const valFs = cells<=2?'5.5rem':cells<=4?'4rem':cells<=6?'3.2rem':'2.6rem';
-  const hrtFs = cells<=2?'1.4rem':cells<=4?'1.1rem':'.85rem';
+  const valFs = cells <= 2 ? '5.5rem' : cells <= 3 ? '4.5rem' : cells <= 4 ? '4rem' : cells <= 6 ? '3.2rem' : '2.6rem';
+  const hrtFs = cells <= 3 ? '1.3rem' : cells <= 4 ? '1.1rem' : '.85rem';
 
-  const sorted = [...gs.players].map((p,i)=>({...p,_i:i})).sort((a,b)=>b.score-a.score);
+  const sorted = [...gs.players].map((p,i) => ({...p, _i:i})).sort((a,b) => b.score - a.score);
 
-  area.innerHTML = gs.players.map((p,i) => {
-    const rank   = sorted.findIndex(s=>s._i===i);
-    const leader = rank===0 && mode==='score';
+  area.innerHTML = gs.players.map((p, i) => {
+    const rank    = sorted.findIndex(s => s._i === i);
+    const leader  = rank === 0 && mode === 'score';
+    const flipped = isFlipped(i, cols);
 
     if (mode === 'lives') {
       let hearts = '';
-      for (let h=0; h<gs.lives; h++)
-        hearts += `<span class="heart${h>=p.livesLeft?' lost':''}" style="font-size:${hrtFs}">❤️</span>`;
+      for (let h = 0; h < gs.lives; h++)
+        hearts += `<span class="heart${h >= p.livesLeft ? ' lost' : ''}" style="font-size:${hrtFs}">❤️</span>`;
       return `
-      <div class="pcard${p.eliminated?' elim':''}" id="pc${i}">
-        <div class="pcard-name">
-          <div class="pcard-dot" style="background:${p.color}"></div>
-          <div class="pcard-lbl">${esc(p.name)}</div>
-        </div>
-        <div class="pcard-tap" id="tap${i}">
-          <div class="pcard-val" style="font-size:${valFs};color:${p.color}">${p.livesLeft}</div>
-          <div class="pcard-hearts">${hearts}</div>
-          <div class="pcard-delta" id="d${i}"></div>
-          <div class="elim-label">ELIMINADO</div>
-        </div>
-        <div class="pcard-btns">
-          <button class="pcard-btn minus" id="bm${i}">− VIDA</button>
-          <button class="pcard-btn plus"  id="bp${i}">+ VIDA</button>
-        </div>
-      </div>`;
+        <div class="pcard${p.eliminated ? ' elim' : ''}${flipped ? ' flipped' : ''}" id="pc${i}">
+          <div class="pcard-name">
+            <div class="pcard-dot" style="background:${p.color}"></div>
+            <div class="pcard-lbl">${esc(p.name)}</div>
+          </div>
+          <div class="pcard-tap" id="tap${i}">
+            <div class="pcard-val" style="font-size:${valFs};color:${p.color}">${p.livesLeft}</div>
+            <div class="pcard-hearts">${hearts}</div>
+            <div class="pcard-delta" id="d${i}"></div>
+            <div class="elim-label">ELIMINADO</div>
+          </div>
+          <div class="pcard-btns">
+            <button class="pcard-btn minus" id="bm${i}">− VIDA</button>
+            <button class="pcard-btn plus"  id="bp${i}">+ VIDA</button>
+          </div>
+        </div>`;
     } else {
       return `
-      <div class="pcard${leader?' leader':''}" id="pc${i}">
-        <div class="pcard-name">
-          <div class="pcard-dot" style="background:${p.color}"></div>
-          <div class="pcard-lbl">${esc(p.name)}</div>
-          <div class="pcard-rank">${rank===0?'👑':'#'+(rank+1)}</div>
-        </div>
-        <div class="pcard-tap" id="tap${i}">
-          <div class="pcard-val" style="font-size:${valFs};color:${leader?p.color:'#fff'}">${p.score}</div>
-          <div class="pcard-delta" id="d${i}"></div>
-        </div>
-        <div class="pcard-btns">
-          <button class="pcard-btn minus" id="bm${i}">−${gs.ppt}</button>
-          <button class="pcard-btn plus"  id="bp${i}">+${gs.ppt}</button>
-        </div>
-      </div>`;
+        <div class="pcard${leader ? ' leader' : ''}${flipped ? ' flipped' : ''}" id="pc${i}">
+          <div class="pcard-name">
+            <div class="pcard-dot" style="background:${p.color}"></div>
+            <div class="pcard-lbl">${esc(p.name)}</div>
+            <div class="pcard-rank">${rank === 0 ? '👑' : '#'+(rank+1)}</div>
+          </div>
+          <div class="pcard-tap" id="tap${i}">
+            <div class="pcard-val" style="font-size:${valFs};color:${leader ? p.color : '#fff'}">${p.score}</div>
+            <div class="pcard-delta" id="d${i}"></div>
+          </div>
+          <div class="pcard-btns">
+            <button class="pcard-btn minus" id="bm${i}">−${gs.ppt}</button>
+            <button class="pcard-btn plus"  id="bp${i}">+${gs.ppt}</button>
+          </div>
+        </div>`;
     }
   }).join('');
 }
 
-function sp(e) { e.stopPropagation(); }
-
-/* ── ATTACH EVENTS after render ── */
+/* ── ATTACH EVENTS ──
+   Called once after every renderGame().
+   innerHTML wipes old DOM so no listener accumulation. */
 function attachEvents() {
   gs.players.forEach((p, i) => {
-    // tap zone
-    const tap = document.getElementById('tap'+i);
-    if (tap) {
-      let tDown = 0;
-      tap.addEventListener('touchstart', e => { e.preventDefault(); tDown = Date.now(); }, { passive:false });
-      tap.addEventListener('touchend', e => {
-        e.preventDefault();
-        if (Date.now() - tDown > 600) return; // ignore long press
-        if (tapGuard[i]) return;
-        tapGuard[i] = true;
-        setTimeout(()=>{ tapGuard[i]=false; }, 350);
+    // TAP ZONE — touchend only on mobile, click only on desktop
+    const tap = document.getElementById('tap' + i);
+    if (!tap) return;
+
+    let touchStarted = false;
+
+    tap.addEventListener('touchstart', e => {
+      e.preventDefault();
+      touchStarted = true;
+    }, { passive: false });
+
+    tap.addEventListener('touchend', e => {
+      e.preventDefault();
+      if (!touchStarted) return;
+      touchStarted = false;
+      doTap(i);
+    }, { passive: false });
+
+    tap.addEventListener('click', () => {
+      if (touchStarted) return; // already handled by touchend
+      doTap(i);
+    });
+
+    // MINUS button
+    const bm = document.getElementById('bm' + i);
+    if (bm) {
+      bm.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+      bm.addEventListener('click', e => {
+        e.stopPropagation();
         if (mode === 'lives') chLives(i, -1);
-        else chScore(i, +1);
-      }, { passive:false });
-      // fallback click for desktop/preview
-      tap.addEventListener('click', () => {
-        if (tapGuard[i]) return;
-        tapGuard[i] = true;
-        setTimeout(()=>{ tapGuard[i]=false; }, 350);
-        if (mode === 'lives') chLives(i, -1);
+        else chScore(i, -1);
+      });
+    }
+
+    // PLUS button
+    const bp = document.getElementById('bp' + i);
+    if (bp) {
+      bp.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+      bp.addEventListener('click', e => {
+        e.stopPropagation();
+        if (mode === 'lives') chLives(i, +1);
         else chScore(i, +1);
       });
     }
-    // minus button
-    const bm = document.getElementById('bm'+i);
-    if (bm) {
-      bm.addEventListener('touchstart', e => e.stopPropagation(), { passive:true });
-      bm.addEventListener('click', e => { e.stopPropagation(); if(mode==='lives') chLives(i,-1); else chScore(i,-1); });
-    }
-    // plus button
-    const bp = document.getElementById('bp'+i);
-    if (bp) {
-      bp.addEventListener('touchstart', e => e.stopPropagation(), { passive:true });
-      bp.addEventListener('click', e => { e.stopPropagation(); if(mode==='lives') chLives(i,+1); else chScore(i,+1); });
-    }
   });
+}
+
+function doTap(i) {
+  if (tapGuard[i]) return;
+  tapGuard[i] = true;
+  setTimeout(() => { tapGuard[i] = false; }, 300);
+  if (mode === 'lives') chLives(i, -1);
+  else chScore(i, +1);
 }
 
 /* ── LIVES ── */
 function chLives(i, delta) {
   const p = gs.players[i];
-  if (p.eliminated) { tapGuard[i]=false; return; }
-  hist.push({ type:'lives', i, prev:{ livesLeft:p.livesLeft, eliminated:p.eliminated } });
+  if (p.eliminated) return;
+  hist.push({ type: 'lives', i, prev: { livesLeft: p.livesLeft, eliminated: p.eliminated } });
   p.livesLeft = Math.max(0, Math.min(gs.lives, p.livesLeft + delta));
   if (p.livesLeft === 0) p.eliminated = true;
-  // flash BEFORE re-render so element still exists
   flashPending = { i, delta };
-  renderGame();
-  attachEvents();
+  renderAndBind();
   doFlash();
-  const alive = gs.players.filter(pl=>!pl.eliminated);
-  if (alive.length===1)       setTimeout(()=>triggerWinner(alive[0],'last'), 450);
-  else if (alive.length===0)  setTimeout(()=>triggerWinner(null,'draw'),     450);
+  const alive = gs.players.filter(pl => !pl.eliminated);
+  if (alive.length === 1)      setTimeout(() => triggerWinner(alive[0], 'last'), 450);
+  else if (alive.length === 0) setTimeout(() => triggerWinner(null, 'draw'),     450);
 }
 
 /* ── SCORE ── */
 function chScore(i, dir) {
-  const p = gs.players[i];
+  const p     = gs.players[i];
   const delta = gs.ppt * dir;
-  hist.push({ type:'score', i, prev:{ score:p.score } });
+  hist.push({ type: 'score', i, prev: { score: p.score } });
   p.score = Math.max(0, p.score + delta);
   flashPending = { i, delta };
-  renderGame();
-  attachEvents();
+  renderAndBind();
   doFlash();
-  if (gs.winScore && p.score >= gs.winScore) setTimeout(()=>triggerWinner(p,'score'), 300);
+  if (gs.winScore && p.score >= gs.winScore) setTimeout(() => triggerWinner(p, 'score'), 300);
 }
 
-/* ── FLASH (after render) ── */
-let flashPending = null;
+/* ── DELTA FLASH (after renderGame so DOM is fresh) ── */
 function doFlash() {
   if (!flashPending) return;
   const { i, delta } = flashPending;
   flashPending = null;
-  const el = document.getElementById('d'+i);
+  const el = document.getElementById('d' + i);
   if (!el) return;
-  el.className = 'pcard-delta ' + (delta>=0?'pos':'neg');
-  el.textContent = (delta>=0?'+':'')+delta;
-  void el.offsetWidth;
+  el.className   = 'pcard-delta ' + (delta >= 0 ? 'pos' : 'neg');
+  el.textContent = (delta >= 0 ? '+' : '') + delta;
+  void el.offsetWidth; // force reflow to restart animation
   el.classList.add('anim');
-  setTimeout(()=>{ if(el) el.classList.remove('anim'); }, 700);
+  setTimeout(() => { if (el) el.classList.remove('anim'); }, 700);
 }
 
 /* ── UNDO ── */
@@ -650,9 +680,13 @@ function undoLast() {
   if (!hist.length) { toast('Nada que deshacer'); return; }
   const last = hist.pop();
   const p    = gs.players[last.i];
-  if (last.type==='lives') { p.livesLeft=last.prev.livesLeft; p.eliminated=last.prev.eliminated; }
-  else { p.score=last.prev.score; }
-  renderGame();
+  if (last.type === 'lives') {
+    p.livesLeft  = last.prev.livesLeft;
+    p.eliminated = last.prev.eliminated;
+  } else {
+    p.score = last.prev.score;
+  }
+  renderAndBind(); // FIX: was missing attachEvents
   toast('↩️ Deshecho');
 }
 
@@ -660,47 +694,57 @@ function undoLast() {
 function triggerWinner(player, reason) {
   document.getElementById('wName').textContent =
     player ? player.name.toUpperCase() : '¡EMPATE!';
-  document.getElementById('wSub').textContent  =
-    !player         ? 'Todos eliminados' :
-    reason==='last' ? '¡Último superviviente!' :
-                      `${player.score} puntos · ¡${player.name} gana!`;
+  document.getElementById('wSub').textContent =
+    !player          ? 'Todos eliminados' :
+    reason === 'last'? '¡Último superviviente!' :
+                       `${player.score} pts · ¡${player.name} gana!`;
   document.getElementById('winnerOv').classList.add('show');
 }
 
 function showWinner() {
   const players = gs.players;
-  if (mode==='lives') {
-    const alive = players.filter(p=>!p.eliminated);
+  if (mode === 'lives') {
+    const alive = players.filter(p => !p.eliminated);
     const pool  = alive.length ? alive : players;
-    const best  = [...pool].sort((a,b)=>b.livesLeft-a.livesLeft)[0];
+    const best  = [...pool].sort((a,b) => b.livesLeft - a.livesLeft)[0];
     document.getElementById('wName').textContent = best.name.toUpperCase();
     document.getElementById('wSub').textContent  =
-      alive.length>1 ? `Va ganando · ${best.livesLeft} vida${best.livesLeft!==1?'s':''}` :
-      alive.length===1 ? '¡Último superviviente!' : '¡Empate!';
+      alive.length > 1  ? `Va ganando · ${best.livesLeft} vida${best.livesLeft !== 1 ? 's' : ''}` :
+      alive.length === 1? '¡Último superviviente!' : '¡Empate!';
   } else {
-    const best = [...players].sort((a,b)=>b.score-a.score)[0];
+    const best = [...players].sort((a,b) => b.score - a.score)[0];
     document.getElementById('wName').textContent = best.name.toUpperCase();
     document.getElementById('wSub').textContent  = `Va ganando con ${best.score} puntos`;
   }
   document.getElementById('winnerOv').classList.add('show');
 }
 
-function closeWinner()  { document.getElementById('winnerOv').classList.remove('show'); }
-function resetToHome()  { closeWinner(); pending=[]; gs={}; hist=[]; goTo('home'); }
-function confirmBack()  { if(confirm('¿Salir de la partida?')) resetToHome(); }
+function closeWinner() { document.getElementById('winnerOv').classList.remove('show'); }
+
+function resetToHome() {
+  closeWinner();
+  pending = []; gs = {}; hist = []; flashPending = null;
+  goTo('home');
+}
+
+function confirmBack() {
+  if (confirm('¿Salir de la partida?')) resetToHome();
+}
 
 /* ── UTILS ── */
 function toast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
+  t.textContent = msg;
+  t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(()=>t.classList.remove('show'), 2200);
+  t._t = setTimeout(() => t.classList.remove('show'), 2200);
 }
+
 function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-
 </script>
 </body>
 </html>
