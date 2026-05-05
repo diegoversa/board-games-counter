@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -356,9 +359,12 @@ html, body {
 .mus-center { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 
 .mus-apuestas-scroll {
-  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  flex: 1; overflow: hidden;
   padding: .3rem .3rem;
-  display: flex; flex-direction: column; gap: .3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: .3rem;
 }
 
 /* Lance card */
@@ -369,7 +375,7 @@ html, body {
   overflow: hidden; cursor: pointer;
   transition: transform .1s, border-color .15s;
   -webkit-tap-highlight-color: transparent;
-  flex: 1;
+  min-height: 0;
 }
 .lance-card:active { transform: scale(.96); border-color: #60d080; }
 
@@ -408,15 +414,15 @@ html, body {
 
 /* Tipo row — compact chips inside card */
 .tipo-row {
-  display: flex; gap: .2rem; padding: .2rem .3rem;
+  display: flex; gap: .15rem; padding: .15rem .3rem;
   flex-shrink: 0; flex-wrap: nowrap;
 }
 .tipo-btn {
-  flex: 1; padding: .18rem .2rem; border-radius: 5px;
+  flex: 1; padding: .14rem .15rem; border-radius: 4px;
   border: 1px solid #2a5035; background: #0d2a1a;
-  font-size: .58rem; font-weight: 800; cursor: pointer; color: #3a7050;
+  font-size: .55rem; font-weight: 800; cursor: pointer; color: #3a7050;
   text-align: center; transition: all .12s; white-space: nowrap;
-  letter-spacing: .3px;
+  letter-spacing: .2px;
 }
 .tipo-btn.sel { background: #1a5030; color: #80f090; border-color: #40a060; }
 
