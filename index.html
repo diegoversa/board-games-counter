@@ -991,10 +991,9 @@ function startMus(){
 }
 
 function initApuestas(){
-  // Each lance: { estado: 'libre'|'envite'|'ordago', envite: N, aceptado: null|true|false, equipoApuesta: null|0|1 }
   const a={};
   LANCES.forEach(l=>{
-    a[l.key]={ estado:'libre', envite:1, aceptado:null, equipoApuesta:null, tipo: l.hasTipo ? l.tipos[0].id : null };
+    a[l.key]={ pts: l.hasTipo ? l.tipos[0].pts : 1, tipo: l.hasTipo ? l.tipos[0].id : null };
   });
   return a;
 }
@@ -1037,57 +1036,27 @@ function renderMusGame(){
   });
 
   // Render center apuestas
-  const t0name=esc(mus.teams[0].name).substring(0,7);
-  const t1name=esc(mus.teams[1].name).substring(0,7);
-
   document.getElementById('musApuestasScroll').innerHTML = LANCES.map(l=>{
     const a=mus.apuestas[l.key];
-    const isOrdago   = a.estado==='ordago';
-    const isEnvite   = a.estado==='envite';
-    const isPendiente= (isEnvite||isOrdago) && a.aceptado===null;
-    const isAceptado = a.aceptado===true;
-    const isRechazado= a.aceptado===false;
-
-    let statusHtml='';
-    if(isPendiente)  statusHtml=`<span class="lance-status pendiente">Pendiente</span>`;
-    else if(isAceptado)  statusHtml=`<span class="lance-status apostado">Apostado: ${isOrdago?'Órdago':a.envite+'pt'}</span>`;
-    else if(isRechazado) statusHtml=`<span class="lance-status nada">No quiero</span>`;
-    else statusHtml=`<span class="lance-status nada">Libre</span>`;
 
     let tipoSelector='';
     if(l.hasTipo){
-      tipoSelector=`<div class="tipo-row">${l.tipos.map(tp=>`<button class="tipo-btn${a.tipo===tp.id?' sel':''}" onclick="setTipo('${l.key}','${tp.id}')">${tp.label}(${tp.pts})</button>`).join('')}</div>`;
-    }
-
-    let actionHtml='';
-    if(a.estado==='libre'){
-      actionHtml=`
-        <div class="apuesta-row">
-          <button class="apuesta-btn${a.equipoApuesta===0?' selected':''}" onclick="hacerEnvite(0,'${l.key}')">${t0name}</button>
-          <button class="apuesta-btn${a.equipoApuesta===1?' selected':''}" onclick="hacerEnvite(1,'${l.key}')">${t1name}</button>
-          <button class="apuesta-btn ordago" onclick="hacerOrdago('${l.key}')">Órdago</button>
-        </div>
-        <div class="envite-row">
-          <span class="envite-label">Pts:</span>
-          <button class="envite-btn" onclick="changeEnvite('${l.key}',-1)">−</button>
-          <span class="envite-val" id="env_${l.key}">${a.envite}</span>
-          <button class="envite-btn" onclick="changeEnvite('${l.key}',+1)">+</button>
-        </div>`;
-    } else if(isPendiente){
-      actionHtml=`<div class="apuesta-row">
-        <button class="apuesta-btn quiero" onclick="responderApuesta('${l.key}',true)">✓ Quiero</button>
-        <button class="apuesta-btn noquiero" onclick="responderApuesta('${l.key}',false)">✗ No quiero</button>
-      </div>`;
+      tipoSelector=`<div class="tipo-row">${l.tipos.map(tp=>`<button class="tipo-btn${a.tipo===tp.id?' sel':''}" onclick="setTipo('${l.key}','${tp.id}')">${tp.label}</button>`).join('')}</div>`;
     }
 
     return`<div class="lance-card">
       <div class="lance-card-header">
         <span class="lance-icon">${l.icon}</span>
         <span class="lance-name-label">${l.name}</span>
-        ${statusHtml}
+        <span class="lance-status apostado">${a.pts} pt${a.pts!==1?'s':''}</span>
       </div>
       ${tipoSelector}
-      ${actionHtml}
+      <div class="envite-row">
+        <span class="envite-label">Puntos:</span>
+        <button class="envite-btn" onclick="changeLancePts('${l.key}',-1)">−</button>
+        <span class="envite-val" id="env_${l.key}">${a.pts}</span>
+        <button class="envite-btn" onclick="changeLancePts('${l.key}',+1)">+</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1105,37 +1074,20 @@ function checkMusOrientation(){
 window.addEventListener('resize', checkMusOrientation);
 window.addEventListener('orientationchange', ()=>setTimeout(checkMusOrientation,250));
 
-/* ══ MUS APUESTAS ══ */
+/* ══ MUS LANCES ══ */
 function setTipo(lanceKey, tipoId){
+  const l=LANCES.find(x=>x.key===lanceKey);
+  const tipoInfo=l.tipos.find(x=>x.id===tipoId);
   mus.apuestas[lanceKey].tipo=tipoId;
+  mus.apuestas[lanceKey].pts=tipoInfo.pts;
   renderMusGame();
 }
 
-function hacerEnvite(equipo, lanceKey){
+function changeLancePts(lanceKey, delta){
   const a=mus.apuestas[lanceKey];
-  a.estado='envite';
-  a.equipoApuesta=equipo;
-  a.aceptado=null;
-  renderMusGame();
-}
-
-function hacerOrdago(lanceKey){
-  const a=mus.apuestas[lanceKey];
-  a.estado='ordago';
-  a.aceptado=null;
-  renderMusGame();
-}
-
-function responderApuesta(lanceKey, quiero){
-  mus.apuestas[lanceKey].aceptado=quiero;
-  renderMusGame();
-}
-
-function changeEnvite(lanceKey, delta){
-  const a=mus.apuestas[lanceKey];
-  a.envite=Math.max(1, (a.envite||1)+delta);
+  a.pts=Math.max(1,(a.pts||1)+delta);
   const el=document.getElementById('env_'+lanceKey);
-  if(el) el.textContent=a.envite;
+  if(el) el.textContent=a.pts;
 }
 
 /* ══ FIN DE RONDA MODAL ══ */
@@ -1176,19 +1128,7 @@ function buildRondaResultRows(){
 }
 
 function calcLancePts(lanceKey){
-  const a=mus.apuestas[lanceKey];
-  const l=LANCES.find(x=>x.key===lanceKey);
-  // Base points from tipo
-  let basePts=1;
-  if(l.hasTipo && a.tipo){
-    const tipoInfo=l.tipos.find(x=>x.id===a.tipo);
-    if(tipoInfo) basePts=tipoInfo.pts;
-  }
-  // Apuesta modifier
-  if(a.estado==='ordago') return 'ÓRDAGO';
-  if(a.aceptado===false) return 1; // no quiero = 1 piedra al que apostó
-  if(a.aceptado===true || a.estado==='libre') return a.estado==='envite' ? a.envite : basePts;
-  return basePts;
+  return mus.apuestas[lanceKey].pts || 1;
 }
 
 function setRondaWinner(lanceKey, winner){
@@ -1201,50 +1141,21 @@ function setRondaWinner(lanceKey, winner){
 function applyRonda(){
   if(!window._rondaResult) window._rondaResult={};
 
-  // Save history snapshot
   mus.history.push({
     type:'ronda',
-    snapshot: mus.teams.map(t=>({piedras:t.piedras, amarragos:t.amarragos})),
+    snapshot: mus.teams.map(t=>({piedras:t.piedras,amarragos:t.amarragos})),
     apuestas: JSON.parse(JSON.stringify(mus.apuestas))
   });
 
   let pts=[0,0];
   LANCES.forEach(l=>{
     const rr=window._rondaResult[l.key];
-    if(!rr||rr.winner===null||rr.winner===-1) return; // nadie/sin selección
-    const winner=rr.winner;
-    const a=mus.apuestas[l.key];
-    const lObj=LANCES.find(x=>x.key===l.key);
-
-    if(a.estado==='ordago'){
-      // Órdago: winner takes ALL remaining stones needed to win
-      pts[winner] += mus.goal - totalPiedras(mus.teams[winner]);
-      return;
-    }
-    if(a.aceptado===false){
-      // No quiero: la que apostó gana 1 piedra
-      const apostador = a.equipoApuesta;
-      if(apostador!==null) pts[apostador]+=1;
-      return;
-    }
-    // Normal: winner gets envite or base pts
-    let p=1;
-    if(a.estado==='envite'&&a.aceptado===true) p=a.envite;
-    else{
-      // Base pts from tipo
-      if(lObj.hasTipo && a.tipo){
-        const tipoInfo=lObj.tipos.find(x=>x.id===a.tipo);
-        if(tipoInfo) p=tipoInfo.pts;
-      }
-    }
-    pts[winner]+=p;
+    if(!rr||rr.winner===null||rr.winner===-1) return;
+    pts[rr.winner] += mus.apuestas[l.key].pts || 1;
   });
 
-  [0,1].forEach(ti=>{
-    if(pts[ti]>0) addMusPiedraSilent(ti,pts[ti]);
-  });
+  [0,1].forEach(ti=>{ if(pts[ti]>0) addMusPiedraSilent(ti,pts[ti]); });
 
-  // Reset for next ronda
   mus.apuestas=initApuestas();
   mus.ronda++;
   window._rondaResult={};
