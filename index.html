@@ -371,67 +371,63 @@ html, body {
 
 .mus-apuestas-scroll {
   flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: .35rem .4rem;
+  padding: .3rem .35rem;
   display: flex; flex-direction: column; gap: .3rem;
 }
 
-/* Lance card in center */
+/* Lance card in center — big interactive tap */
 .lance-card {
-  background: #fff; border: 1.5px solid #ede0b8; border-radius: 10px;
-  padding: .4rem .6rem;
+  background: #fff; border: 1.5px solid #ede0b8; border-radius: 12px;
+  display: flex; flex-direction: column;
+  overflow: hidden; cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+  -webkit-tap-highlight-color: transparent;
+  flex: 1; /* fill equal height in flex column */
 }
-.lance-card-header {
-  display: flex; align-items: center; gap: .35rem; margin-bottom: .25rem;
-}
-.lance-icon { font-size: .9rem; flex-shrink: 0; }
-.lance-name-label { font-weight: 800; font-size: .78rem; flex: 1; color: #333; }
-.lance-status {
-  font-size: .58rem; font-weight: 700; padding: .1rem .35rem;
-  border-radius: 4px; letter-spacing: .5px; text-transform: uppercase;
-}
-.lance-status.pendiente { background: #fff8e0; color: #b07800; border: 1px solid #e8d060; }
-.lance-status.apostado  { background: #e8f8f0; color: #10a060; border: 1px solid #a0e0c0; }
-.lance-status.nada      { background: #f5f5f5; color: #bbb; border: 1px solid #e0e0e0; }
+.lance-card:active { transform: scale(.97); box-shadow: 0 2px 12px rgba(200,134,10,.2); }
 
-.tipo-row { display: flex; gap: .25rem; flex-wrap: wrap; margin-bottom: .25rem; }
+.lance-card-header {
+  display: flex; align-items: center; gap: .3rem;
+  padding: .3rem .5rem;
+  background: #fffbf0; border-bottom: 1px solid #f0e8c8;
+  flex-shrink: 0;
+}
+.lance-icon { font-size: .85rem; flex-shrink: 0; }
+.lance-name-label { font-weight: 800; font-size: .72rem; flex: 1; color: #333; }
+
+/* Big pts number in center */
+.lance-pts-big {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.lance-pts-num {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 3rem; color: #b07800; line-height: 1;
+  pointer-events: none;
+  transition: transform .1s;
+}
+.lance-card:active .lance-pts-num { transform: scale(.88); }
+
+/* Small minus button bottom-right */
+.lance-minus {
+  position: absolute; bottom: .3rem; right: .35rem;
+  width: 22px; height: 22px; border-radius: 6px;
+  border: 1.5px solid #e0dbd4; background: #fff;
+  color: #aaa; font-size: .85rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+.lance-minus:active { background: #fff0e0; color: #e02040; transform: scale(.9); }
+
+/* Tipo row inside card */
+.tipo-row { display: flex; gap: .2rem; padding: .25rem .4rem; flex-wrap: wrap; flex-shrink: 0; }
 .tipo-btn {
-  padding: .2rem .45rem; border-radius: 6px;
+  flex: 1; padding: .2rem .3rem; border-radius: 6px;
   border: 1.5px solid #e8e4de; background: #f8f5f0;
-  font-size: .65rem; font-weight: 700; cursor: pointer; color: #999;
-  transition: all .12s;
+  font-size: .6rem; font-weight: 700; cursor: pointer; color: #999;
+  text-align: center; transition: all .12s; white-space: nowrap;
 }
 .tipo-btn.sel { background: #fff8e0; color: #b07800; border-color: #c8860a; }
-
-.apuesta-row { display: flex; gap: .25rem; flex-wrap: wrap; }
-.apuesta-btn {
-  padding: .22rem .5rem; border-radius: 7px;
-  border: 1.5px solid #ede0b8; background: #fffbf0;
-  font-size: .65rem; font-weight: 700; cursor: pointer;
-  color: #b07800; transition: all .12s; white-space: nowrap;
-}
-.apuesta-btn:active { transform: scale(.93); }
-.apuesta-btn.selected  { background: #b07800; color: #fff; border-color: #b07800; }
-.apuesta-btn.ordago    { border-color: #e02040; color: #e02040; }
-.apuesta-btn.ordago.selected { background: #e02040; color: #fff; }
-.apuesta-btn.quiero    { border-color: #10a060; color: #10a060; }
-.apuesta-btn.quiero.selected { background: #10a060; color: #fff; }
-.apuesta-btn.noquiero  { border-color: #e02040; color: #e02040; }
-.apuesta-btn.noquiero.selected { background: #e02040; color: #fff; }
-
-.envite-row {
-  display: flex; align-items: center; gap: .3rem; margin-top: .2rem;
-}
-.envite-label { font-size: .58rem; color: #aaa; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-.envite-btn {
-  width: 22px; height: 22px; border-radius: 5px;
-  border: 1.5px solid #e0dbd4; background: #fff;
-  color: #555; font-size: .85rem; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.envite-val {
-  font-family:'Bebas Neue',cursive; font-size: 1rem; color: #1a1a1a;
-  min-width: 18px; text-align: center;
-}
 
 /* ── MUS BOTTOM BAR ── */
 .mus-bottom {
@@ -984,7 +980,7 @@ function startMus(){
     history:[]
   };
   document.getElementById('wPrimary').className='w-btn primary mus';
-  renderMusGame();
+  renderMusGame(); setTimeout(attachLanceEvents,0);
   goTo('musGame');
   checkMusOrientation();
   tryFullscreen();
@@ -1041,21 +1037,18 @@ function renderMusGame(){
 
     let tipoSelector='';
     if(l.hasTipo){
-      tipoSelector=`<div class="tipo-row">${l.tipos.map(tp=>`<button class="tipo-btn${a.tipo===tp.id?' sel':''}" onclick="setTipo('${l.key}','${tp.id}')">${tp.label}</button>`).join('')}</div>`;
+      tipoSelector=`<div class="tipo-row">${l.tipos.map(tp=>`<button class="tipo-btn${a.tipo===tp.id?' sel':''}" data-tipo="${tp.id}" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation();setTipo('${l.key}','${tp.id}')">${tp.label}</button>`).join('')}</div>`;
     }
 
-    return`<div class="lance-card">
+    return`<div class="lance-card" id="lc_${l.key}" onclick="changeLancePts('${l.key}',+1)">
       <div class="lance-card-header">
         <span class="lance-icon">${l.icon}</span>
         <span class="lance-name-label">${l.name}</span>
-        <span class="lance-status apostado">${a.pts} pt${a.pts!==1?'s':''}</span>
       </div>
       ${tipoSelector}
-      <div class="envite-row">
-        <span class="envite-label">Puntos:</span>
-        <button class="envite-btn" onclick="changeLancePts('${l.key}',-1)">−</button>
-        <span class="envite-val" id="env_${l.key}">${a.pts}</span>
-        <button class="envite-btn" onclick="changeLancePts('${l.key}',+1)">+</button>
+      <div class="lance-pts-big">
+        <div class="lance-pts-num" id="lpts_${l.key}">${a.pts}</div>
+        <button class="lance-minus" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation();changeLancePts('${l.key}',-1)">−</button>
       </div>
     </div>`;
   }).join('');
@@ -1080,14 +1073,49 @@ function setTipo(lanceKey, tipoId){
   const tipoInfo=l.tipos.find(x=>x.id===tipoId);
   mus.apuestas[lanceKey].tipo=tipoId;
   mus.apuestas[lanceKey].pts=tipoInfo.pts;
-  renderMusGame();
+  renderMusGame(); setTimeout(attachLanceEvents,0);
 }
 
 function changeLancePts(lanceKey, delta){
   const a=mus.apuestas[lanceKey];
   a.pts=Math.max(1,(a.pts||1)+delta);
-  const el=document.getElementById('env_'+lanceKey);
-  if(el) el.textContent=a.pts;
+  const el=document.querySelector(`#lc_${lanceKey} .lance-pts-num`);
+  if(el){
+    el.textContent=a.pts;
+    el.style.transition='none';
+    el.style.transform='scale(1.4)';
+    el.style.color=delta>0?'#c8860a':'#e02040';
+    setTimeout(()=>{
+      el.style.transition='transform .18s ease, color .25s ease';
+      el.style.transform='scale(1)';
+      el.style.color='#b07800';
+    }, 60);
+  }
+}
+
+function attachLanceEvents(){
+  LANCES.forEach(l=>{
+    const card=document.getElementById('lc_'+l.key);
+    if(!card) return;
+    // Tipo buttons — use onclick already in HTML (setTipo inline), just block propagation
+    card.querySelectorAll('.tipo-btn').forEach((btn,idx)=>{
+      btn.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+    });
+    // Minus button — block propagation, already has onclick inline
+    const minus=card.querySelector('.lance-minus');
+    if(minus) minus.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+    // Card tap — touchend only to avoid double-fire with onclick
+    let touched=false;
+    card.addEventListener('touchstart',()=>{ touched=true; },{passive:true});
+    card.addEventListener('touchend',e=>{
+      // only fire if touch didn't land on tipo-btn or minus
+      if(!touched) return;
+      touched=false;
+      const t=e.target;
+      if(t.classList.contains('tipo-btn')||t.classList.contains('lance-minus')) return;
+      changeLancePts(l.key,+1);
+    },{passive:true});
+  });
 }
 
 /* ══ FIN DE RONDA MODAL ══ */
@@ -1160,7 +1188,7 @@ function applyRonda(){
   mus.ronda++;
   window._rondaResult={};
 
-  renderMusGame();
+  renderMusGame(); setTimeout(attachLanceEvents,0);
   document.getElementById('rondaModal').classList.remove('show');
   toast(`✅ ${mus.teams[0].name}: +${pts[0]} · ${mus.teams[1].name}: +${pts[1]}`);
 
@@ -1179,7 +1207,7 @@ function musQuick(ti,delta){
   const team=mus.teams[ti];
   mus.history.push({type:'quick',ti,snapshot:{piedras:team.piedras,amarragos:team.amarragos}});
   addMusPiedraSilent(ti,delta);
-  renderMusGame();
+  renderMusGame(); setTimeout(attachLanceEvents,0);
   if(totalPiedras(mus.teams[ti])>=mus.goal) setTimeout(()=>triggerMusWinner(ti),400);
 }
 function addMusPiedraSilent(ti,n){
@@ -1199,7 +1227,7 @@ function musUndo(){
     mus.teams[last.ti].piedras=last.snapshot.piedras;
     mus.teams[last.ti].amarragos=last.snapshot.amarragos;
   }
-  renderMusGame(); toast('↩️ Deshecho');
+  renderMusGame(); setTimeout(attachLanceEvents,0); toast('↩️ Deshecho');
 }
 
 /* ══ WINNER ══ */
