@@ -149,8 +149,15 @@ html, body {
 .hidden { display: none !important; }
 
 /* ══ GENERIC GAME ══ */
-#game { overflow: hidden; background: #e8e4de; }
-.game-layout { position: absolute; inset: 0; display: flex; flex-direction: column; }
+#game { overflow: hidden; background: #080808; }
+.game-layout {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  /* Fill safe areas with the same dark bg */
+  background: #080808;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
 .game-bar {
   display: flex; align-items: center;
   padding: .3rem .7rem;
@@ -194,17 +201,17 @@ html, body {
 .pcard.rot-down { transform: rotate(180deg); }
 
 .pcard-name {
-  padding: .25rem .6rem;
+  padding: .3rem .7rem;
   display: flex; align-items: center; gap: .4rem;
-  flex-shrink: 0; height: 26px;
+  flex-shrink: 0; height: 30px;
   background: rgba(255,255,255,.25);
 }
-.pcard-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: rgba(255,255,255,.6); }
+.pcard-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: rgba(255,255,255,.6); }
 .pcard-lbl  {
-  font-size: .6rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; color: rgba(255,255,255,.9);
+  font-size: .82rem; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; color: rgba(255,255,255,.95);
 }
-.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .78rem; color: rgba(255,255,255,.5); flex-shrink: 0; }
+.pcard-rank { font-family:'Bebas Neue',cursive; font-size: .9rem; color: rgba(255,255,255,.5); flex-shrink: 0; }
 
 .pcard-tap {
   flex: 1; display: flex; flex-direction: column;
@@ -268,7 +275,13 @@ html, body {
 
 /* ══ MUS SCREEN — CASINO GREEN ══ */
 #musGame { background: #0f3020; overflow: hidden; }
-.mus-layout { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.mus-layout {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  background: #0f3020;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
 .mus-portrait-hint {
   position: absolute; inset: 0; z-index: 90; background: #0f3020;
