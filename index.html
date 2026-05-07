@@ -886,8 +886,10 @@ function gridLayout(n){
   if(n<=6)  return{cols:3,rows:2};
   return{cols:4,rows:2};
 }
-function isRotatedDown(idx,cols,rows){
-  return Math.floor(idx/cols) >= Math.ceil(rows/2);
+function isRotatedDown(idx, cols, rows){
+  // Bottom rows (charger side) = normal orientation
+  // Top rows (camera side) = rotated 180° so they read toward the camera edge
+  return Math.floor(idx/cols) < Math.ceil(rows/2);
 }
 
 /* ══ RENDER GENERIC ══ */
